@@ -22,9 +22,10 @@
     position:sticky; top:0; z-index:100;
     display:flex; align-items:center; justify-content:space-between;
     padding:20px 48px;
-    background:rgba(11,11,12,0.92);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
+    background:rgba(11,11,12,0);
+    backdrop-filter:blur(0px);
+    border-bottom:1px solid transparent;
+    transition: background .35s ease, backdrop-filter .35s ease, border-color .35s ease;
   }
   .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
   .nav-links{display:flex; gap:36px; list-style:none;}
@@ -232,6 +233,22 @@
     .nav-desktop-icons button[aria-label="Wishlist"]{display:none;}
   }
 
+  nav.nav-scrolled{
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .sr{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1);
+  }
+  .sr.sr-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
 </style>
 <script src="eleven-cart.js"></script>
 </head>
@@ -423,7 +440,8 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <h3 class="display">Message sent</h3>
-      <p>We'll get back to you at <strong id="successEmail"></strong> within 24 hours. Check your spam folder if you don't hear from us.</p>
+      <p>Your message has been sent to us on WhatsApp. We'll reply to <strong id="successEmail"></strong> within 24 hours.</p>
+      <p style="font-size:12px; color:var(--steel-dim); margin-top:8px;">Didn't open WhatsApp? <a id="waFallback" href="#" target="_blank" rel="noopener" style="color:var(--gold); text-decoration:none;">Tap here to resend →</a></p>
       <button class="btn-ghost" onclick="resetForm()">Send another message</button>
     </div>
   </div>
@@ -472,6 +490,26 @@
       return;
     }
 
+    // Build WhatsApp message with all form data
+    const topic = selectedTopic || 'General';
+    const orderId = document.getElementById('inp-orderid') ? document.getElementById('inp-orderid').value.trim() : '';
+    let waText = 'Hi ELEVEN! I have a query.';
+    waText += '\n\nName: ' + name.value.trim();
+    waText += '\nEmail: ' + email.value.trim();
+    waText += '\nTopic: ' + topic;
+    if(orderId) waText += '\nOrder ID: ' + orderId;
+    waText += '\n\nMessage: ' + msg.value.trim();
+
+    // Also open mailto as fallback
+    const mailSubject = encodeURIComponent('ELEVEN Enquiry — ' + topic);
+    const mailBody = encodeURIComponent(waText);
+    const waLink = 'https://wa.me/917560943996?text=' + encodeURIComponent(waText);
+
+    // Open WhatsApp
+    window.open(waLink, '_blank');
+    var fb = document.getElementById('waFallback');
+    if(fb) fb.href = waLink;
+
     document.getElementById('successEmail').textContent = email.value.trim();
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('successState').classList.add('show');
@@ -500,5 +538,110 @@
   }
 </script>
 
+<script>
+(function(){
+  var nav = document.querySelector('nav');
+  if(!nav) return;
+  function checkScroll(){
+    nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+  }
+  window.addEventListener('scroll', checkScroll, {passive:true});
+  checkScroll();
+})();
+</script>
+<script>
+(function(){
+  var SELECTORS = '.product-card, .why-item, .collection-tile, .section-head, .about-stat, .contact-card, .faq-item, .drop-banner, .cd-item';
+  var observed = new WeakSet();
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        // stagger siblings in the same parent
+        var siblings = Array.from(e.target.parentNode.children).filter(function(c){ return c.classList.contains('sr'); });
+        var idx = siblings.indexOf(e.target);
+        e.target.style.transitionDelay = (idx * 70) + 'ms';
+        e.target.classList.add('sr-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  function attach(){
+    document.querySelectorAll(SELECTORS).forEach(function(el){
+      if(!observed.has(el)){
+        observed.add(el);
+        el.classList.add('sr');
+        io.observe(el);
+      }
+    });
+  }
+
+  // Initial attach
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
+
+  // Re-scan for JS-rendered cards (shop, new-arrivals)
+  var scans = 0;
+  var scanner = setInterval(function(){
+    attach();
+    if(++scans >= 8) clearInterval(scanner);
+  }, 400);
+})();
+</script>
+<script>
+/* ========== ELEVEN — shared enhancement effects ========== */
+
+/* NAV LOGO SCRAMBLE — home page only */
+
+/* MAGNETIC BUTTONS */
+(function(){
+  if(window.matchMedia('(hover:none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.addEventListener('mousemove', function(e){
+      var r = btn.getBoundingClientRect();
+      var x = (e.clientX - r.left - r.width/2)  * 0.22;
+      var y = (e.clientY - r.top  - r.height/2) * 0.28;
+      btn.style.transform = 'translate('+x+'px,'+y+'px)';
+    });
+    btn.addEventListener('mouseleave', function(){
+      btn.style.transform = '';
+    });
+  });
+})();
+
+/* 3D CARD TILT */
+(function(){
+  if(window.matchMedia('(hover:none)').matches) return;
+  document.querySelectorAll('.product-card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left)/r.width  - 0.5;
+      var y = (e.clientY - r.top) /r.height - 0.5;
+      card.style.transform = 'perspective(700px) rotateY('+(x*10)+'deg) rotateX('+(-y*7)+'deg) translateZ(4px)';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+    });
+  });
+})();
+
+/* SMOOTH ANCHOR SCROLL */
+(function(){
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var target = document.querySelector(a.getAttribute('href'));
+      if(!target) return;
+      e.preventDefault();
+      var navH = (document.querySelector('nav')||{offsetHeight:72}).offsetHeight;
+      window.scrollTo({top: target.getBoundingClientRect().top + window.scrollY - navH - 12, behavior:'smooth'});
+    });
+  });
+})();
+
+</script>
 </body>
 </html>
