@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stride Runner — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --chalk:#F7F5F0;
+    --charcoal:#1B1B1D;
+    --charcoal-2:#232325;
+    --steel:#C7CCD1;
+    --steel-dim:#8B9096;
+    --blue:#2F6FED;
+    --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85;}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px; position:relative;}
+  .cart-count{position:absolute; top:-4px; right:-6px; background:var(--blue); color:var(--chalk); font-size:9px; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace;}
+
+  .breadcrumb{padding:20px 48px 0; font-size:12px; color:var(--steel-dim);}
+  .breadcrumb a{color:var(--steel-dim); text-decoration:none;}
+  .breadcrumb span{color:var(--chalk);}
+
+  /* ===== PRODUCT LAYOUT ===== */
+  .product-layout{
+    display:grid;
+    grid-template-columns:1fr 460px;
+    gap:64px;
+    padding:32px 48px 80px;
+    align-items:start;
+  }
+
+  /* ===== GALLERY ===== */
+  .gallery{position:sticky; top:90px;}
+  .gallery-main{
+    background:linear-gradient(135deg, var(--charcoal-2), #161617);
+    height:560px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    cursor:zoom-in;
+    border:1px solid var(--line);
+  }
+  .gallery-main svg{width:62%; transition:transform .2s ease;}
+  .gallery-main.zoomed svg{transform:scale(1.9);}
+  .gallery-main.zoomed{cursor:zoom-out;}
+  .zoom-hint{
+    position:absolute; bottom:16px; right:16px;
+    font-size:11px; color:var(--steel-dim);
+    display:flex; align-items:center; gap:6px;
+  }
+  .gallery-badge{position:absolute; top:16px; left:16px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:6px 10px; background:var(--gold); color:var(--ink); font-weight:500;}
+  .gallery-nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%; background:rgba(11,11,12,0.55);
+    border:none; color:var(--chalk); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .gallery-nav-btn.prev{left:14px;} .gallery-nav-btn.next{right:14px;}
+  .thumb-row{display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:10px;}
+  .thumb{
+    height:78px; background:linear-gradient(135deg, var(--charcoal-2), #161617);
+    border:1px solid var(--line); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:border-color .2s;
+  }
+  .thumb.active{border-color:var(--chalk); border-width:2px;}
+  .thumb svg{width:70%;}
+
+  /* ===== PRODUCT INFO ===== */
+  .product-info .mono.sku{font-size:12px; color:var(--steel-dim); letter-spacing:0.05em;}
+  .product-info h1{font-family:'Bebas Neue',sans-serif; font-size:42px; line-height:1.05; margin:8px 0 10px;}
+  .rating-row{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .rating-row .stars{color:var(--gold); font-size:14px;}
+  .rating-row .count{font-size:13px; color:var(--steel-dim); text-decoration:underline; cursor:pointer;}
+  .verified-tag{font-size:11px; color:var(--blue); border:1px solid var(--blue); padding:2px 8px;}
+
+  .price-block{display:flex; align-items:baseline; gap:12px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--line);}
+  .price-now{font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:500;}
+  .price-strike{font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--steel-dim); text-decoration:line-through;}
+  .price-save{font-size:12px; color:var(--gold); font-weight:600;}
+
+  .selector-block{margin-bottom:24px;}
+  .selector-label{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;}
+  .selector-label h4{font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;}
+  .selector-label a{font-size:12px; color:var(--blue); text-decoration:none;}
+
+  .color-row{display:flex; gap:10px;}
+  .color-swatch{width:40px; height:40px; border-radius:50%; cursor:pointer; border:2px solid transparent; position:relative;}
+  .color-swatch.selected{border-color:var(--blue);}
+  .color-swatch.selected::after{content:''; position:absolute; inset:-6px; border:1px solid var(--blue); border-radius:50%;}
+
+  .size-grid-pdp{display:grid; grid-template-columns:repeat(6,1fr); gap:8px;}
+  .size-btn-pdp{
+    font-family:'JetBrains Mono',monospace; font-size:13px;
+    border:1px solid var(--line); background:transparent; color:var(--chalk);
+    padding:12px 0; cursor:pointer; transition:all .2s;
+  }
+  .size-btn-pdp:hover{border-color:var(--steel-dim);}
+  .size-btn-pdp.selected{background:var(--chalk); color:var(--ink); border-color:var(--chalk);}
+  .size-btn-pdp.oos{color:var(--steel-dim); border-color:var(--line); text-decoration:line-through; cursor:not-allowed; opacity:0.4;}
+
+  .stock-indicator{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--gold); margin:14px 0 22px;}
+  .stock-indicator .dot{width:7px; height:7px; border-radius:50%; background:var(--gold);}
+
+  .qty-cart-row{display:flex; gap:12px; margin-bottom:14px;}
+  .qty-control{display:flex; align-items:center; border:1px solid var(--line);}
+  .qty-control button{background:none; border:none; color:var(--chalk); width:40px; height:48px; cursor:pointer; font-size:16px;}
+  .qty-control span{width:36px; text-align:center; font-family:'JetBrains Mono',monospace;}
+  .btn-add-cart{
+    flex:1; background:var(--chalk); color:var(--ink); border:none;
+    font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    cursor:pointer; transition:background .25s;
+  }
+  .btn-add-cart:hover{background:var(--blue); color:var(--chalk);}
+  .btn-buy-now{
+    width:100%; background:transparent; border:1px solid var(--chalk); color:var(--chalk);
+    padding:16px; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    cursor:pointer; margin-bottom:20px; transition:all .25s;
+  }
+  .btn-buy-now:hover{background:var(--chalk); color:var(--ink);}
+
+  .icon-row{display:flex; gap:24px; margin-bottom:24px;}
+  .icon-row button{background:none; border:none; color:var(--steel-dim); font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;}
+  .icon-row button:hover{color:var(--chalk);}
+
+  .delivery-block{border:1px solid var(--line); padding:18px; margin-bottom:24px;}
+  .delivery-row{display:flex; gap:12px; align-items:flex-start; font-size:13px; margin-bottom:12px;}
+  .delivery-row:last-child{margin-bottom:0;}
+  .delivery-row svg{flex-shrink:0; margin-top:2px; color:var(--steel-dim);}
+  .delivery-row strong{display:block; margin-bottom:2px;}
+  .delivery-row span{color:var(--steel-dim); font-size:12px;}
+
+  .accordion{border-top:1px solid var(--line);}
+  .accordion-item{border-bottom:1px solid var(--line);}
+  .accordion-head{display:flex; justify-content:space-between; align-items:center; padding:16px 0; cursor:pointer;}
+  .accordion-head h5{font-size:14px; font-weight:600;}
+  .accordion-head svg{transition:transform .25s;}
+  .accordion-item.open .accordion-head svg{transform:rotate(45deg);}
+  .accordion-body{display:none; padding-bottom:18px; font-size:13px; color:var(--steel-dim); line-height:1.7;}
+  .accordion-item.open .accordion-body{display:block;}
+
+  .sticky-bar{
+    position:fixed; bottom:0; left:0; right:0; z-index:200;
+    background:var(--charcoal); border-top:1px solid var(--line);
+    padding:14px 48px; display:flex; align-items:center; justify-content:space-between;
+    transform:translateY(100%); transition:transform .3s ease;
+  }
+  .sticky-bar.show{transform:translateY(0);}
+  .sticky-bar-left{display:flex; align-items:center; gap:14px;}
+  .sticky-bar-left svg{width:34px;}
+  .sticky-bar h6{font-size:14px; font-weight:600;}
+  .sticky-bar .mono{font-size:13px;}
+  .sticky-bar .btn-add-cart{width:180px; flex:none; padding:13px;}
+
+  section.related{padding:0 48px 100px;}
+  .section-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:32px; border-bottom:1px solid var(--line); padding-bottom:20px;}
+  .section-title{font-family:'Bebas Neue',sans-serif; font-size:32px;}
+  .related-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  .product-card{background:var(--charcoal); border:1px solid var(--line); transition:border-color .3s;}
+  .product-card:hover{border-color:var(--steel-dim);}
+  .card-art{height:200px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center;}
+  .card-art svg{width:65%;}
+  .card-body{padding:14px 14px 16px;}
+  .card-body .mono{font-size:10px; color:var(--steel-dim);}
+  .card-body h4{font-size:14px; font-weight:600; margin:5px 0 8px;}
+  .card-price{font-family:'JetBrains Mono',monospace; font-size:14px;}
+
+  @media (max-width:900px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .breadcrumb{padding:16px 20px 0;}
+    .product-layout{grid-template-columns:1fr; padding:20px 20px 60px; gap:32px;}
+    .gallery{position:static;}
+    .gallery-main{height:380px;}
+    .related-grid{grid-template-columns:repeat(2,1fr);}
+    section.related{padding:0 20px 60px;}
+    .sticky-bar{padding:12px 20px;}
+    .sticky-bar .btn-add-cart{width:120px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo" style="text-decoration:none; color:var(--chalk);">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="index.html#new">New arrivals</a></li>
+    <li><a href="index.html#drops">Limited</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button aria-label="Wishlist"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <button aria-label="Cart" onclick="window.location.href='cart.html'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count">2</span>
+    </button>
+  </div>
+</nav>
+
+<div class="breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="shop.html">Running</a> / <span>Stride Runner</span></div>
+
+<div class="product-layout">
+
+  <div class="gallery">
+    <div class="gallery-main" id="galleryMain" onclick="this.classList.toggle('zoomed')">
+      <span class="gallery-badge">New</span>
+      <button class="gallery-nav-btn prev" onclick="event.stopPropagation(); shiftImage(-1)" aria-label="Previous image"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <svg id="mainSvg" viewBox="0 0 300 180" aria-label="Stride Runner — angle 1">
+        <path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>
+      </svg>
+      <button class="gallery-nav-btn next" onclick="event.stopPropagation(); shiftImage(1)" aria-label="Next image"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <span class="zoom-hint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Click to zoom</span>
+    </div>
+    <div class="thumb-row" id="thumbRow"></div>
+  </div>
+
+  <div class="product-info">
+    <span class="mono sku">ELV-RN-001</span>
+    <h1 class="display">Stride Runner</h1>
+    <div class="rating-row">
+      <span class="stars">★★★★★</span>
+      <span class="count">4.8 (142 reviews)</span>
+      <span class="verified-tag">Verified buyers</span>
+    </div>
+
+    <div class="price-block">
+      <span class="price-now">₹6,499</span>
+      <span class="price-strike">₹7,999</span>
+      <span class="price-save">Save 19%</span>
+    </div>
+
+    <div class="selector-block">
+      <div class="selector-label"><h4>Colour — Charcoal</h4></div>
+      <div class="color-row">
+        <div class="color-swatch selected" style="background:#1B1B1D;" title="Charcoal"></div>
+        <div class="color-swatch" style="background:#F7F5F0; border:1px solid #444;" title="Chalk white"></div>
+        <div class="color-swatch" style="background:#2F6FED;" title="Electric blue"></div>
+        <div class="color-swatch" style="background:#C9A368;" title="Soft gold"></div>
+      </div>
+    </div>
+
+    <div class="selector-block">
+      <div class="selector-label"><h4>Size — UK</h4><a href="contact.html#faq">Size guide</a></div>
+      <div class="size-grid-pdp">
+        <button class="size-btn-pdp">6</button>
+        <button class="size-btn-pdp selected">7</button>
+        <button class="size-btn-pdp">8</button>
+        <button class="size-btn-pdp">9</button>
+        <button class="size-btn-pdp oos">10</button>
+        <button class="size-btn-pdp">11</button>
+      </div>
+    </div>
+
+    <div class="stock-indicator"><span class="dot"></span> Only 6 left in this size</div>
+
+    <div class="qty-cart-row">
+      <div class="qty-control">
+        <button onclick="document.getElementById('qty').textContent=Math.max(1,parseInt(document.getElementById('qty').textContent)-1)">−</button>
+        <span id="qty">1</span>
+        <button onclick="document.getElementById('qty').textContent=parseInt(document.getElementById('qty').textContent)+1">+</button>
+      </div>
+      <button class="btn-add-cart" onclick="window.location.href='cart.html'">Add to cart</button>
+    </div>
+    <button class="btn-buy-now" onclick="window.location.href='checkout.html'">Buy now</button>
+
+    <div class="icon-row">
+      <button><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Wishlist</button>
+      <button><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4M16 17H4m0 0l4 4m-4-4l4-4"/></svg> Compare</button>
+      <button><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg> Share</button>
+    </div>
+
+    <div class="delivery-block">
+      <div class="delivery-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div><strong>Estimated delivery</strong><span>3–6 business days, all-India shipping</span></div>
+      </div>
+      <div class="delivery-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div><strong>Cash on delivery</strong><span>Available for orders under ₹10,000</span></div>
+      </div>
+      <div class="delivery-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <div><strong>Easy 7-day returns</strong><span>Unworn, original packaging</span></div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-item open">
+        <div class="accordion-head" onclick="this.parentElement.classList.toggle('open')"><h5>Description</h5><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="accordion-body">A lightweight daily trainer built on ELEVEN's cushioned stride-foam sole. Breathable knit upper, reinforced heel counter, and a tread pattern designed for wet-weather grip on Bangalore streets.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="this.parentElement.classList.toggle('open')"><h5>Material and care</h5><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="accordion-body">Engineered knit upper, EVA stride-foam midsole, rubber outsole. Wipe clean with a damp cloth; air dry away from direct heat.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="this.parentElement.classList.toggle('open')"><h5>Shipping and returns</h5><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="accordion-body">Dispatched within 24 hours from our Bangalore facility. All-India delivery in 3–6 business days. Free returns within 7 days on unworn pairs.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="this.parentElement.classList.toggle('open')"><h5>Questions and answers</h5><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="accordion-body">Runs true to size for most. Half a size up recommended for thicker socks. Reach out on WhatsApp for fit help before you order.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="related">
+  <div class="section-head">
+    <h3 class="section-title display">You may also like</h3>
+  </div>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
+
+<section class="related" style="padding-top:0;">
+  <div class="section-head">
+    <h3 class="section-title display">Recently viewed</h3>
+  </div>
+  <div class="related-grid" id="recentGrid"></div>
+</section>
+
+<div class="sticky-bar" id="stickyBar">
+  <div class="sticky-bar-left">
+    <svg viewBox="0 0 300 180"><path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/></svg>
+    <div><h6>Stride Runner</h6><span class="mono">₹6,499 · UK 7</span></div>
+  </div>
+  <button class="btn-add-cart" onclick="window.location.href='cart.html'">Add to cart</button>
+</div>
+
+<script>
+/* ===== ELEVEN CART — shared localStorage module ===== */
+const ELEVEN = {
+  CART_KEY: 'eleven_cart',
+  WISH_KEY: 'eleven_wish',
+
+  getCart() {
+    try { return JSON.parse(localStorage.getItem(this.CART_KEY)) || []; } catch { return []; }
+  },
+  saveCart(cart) {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    this.updateAllBadges();
+  },
+  addToCart(item) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === item.sku && i.size === item.size);
+    if (idx >= 0) cart[idx].qty += item.qty || 1;
+    else cart.push({ ...item, qty: item.qty || 1 });
+    this.saveCart(cart);
+  },
+  removeFromCart(sku, size) {
+    this.saveCart(this.getCart().filter(i => !(i.sku === sku && i.size === size)));
+  },
+  changeQty(sku, size, delta) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === sku && i.size === size);
+    if (idx >= 0) {
+      cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+      this.saveCart(cart);
+    }
+  },
+  clearCart() { this.saveCart([]); },
+
+  getWishlist() {
+    try { return JSON.parse(localStorage.getItem(this.WISH_KEY)) || []; } catch { return []; }
+  },
+  toggleWish(sku) {
+    const w = this.getWishlist();
+    const idx = w.indexOf(sku);
+    if (idx >= 0) w.splice(idx, 1); else w.push(sku);
+    localStorage.setItem(this.WISH_KEY, JSON.stringify(w));
+    return w.includes(sku);
+  },
+  isWished(sku) { return this.getWishlist().includes(sku); },
+
+  cartCount() { return this.getCart().reduce((s, i) => s + i.qty, 0); },
+  cartSubtotal() { return this.getCart().reduce((s, i) => s + i.price * i.qty, 0); },
+
+  updateAllBadges() {
+    const count = this.cartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  },
+
+  fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); },
+
+  showToast(msg) {
+    let t = document.getElementById('eleven-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'eleven-toast';
+      t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;
+        letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;
+        font-family:'Inter',sans-serif;`;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+};
+
+// Init badges on every page load
+document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
+
+</script>
+<script>
+  const angles = [
+    '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+    '<ellipse cx="150" cy="100" rx="130" ry="50" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><ellipse cx="150" cy="95" rx="90" ry="28" fill="#222224"/>',
+    '<path d="M40 140 L60 60 L240 60 L260 140 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><line x1="80" y1="60" x2="80" y2="140" stroke="#4a4a4d"/><line x1="150" y1="55" x2="150" y2="140" stroke="#4a4a4d"/><line x1="220" y1="60" x2="220" y2="140" stroke="#4a4a4d"/>',
+    '<path d="M30 120 C30 95 80 80 150 78 C220 80 270 95 270 120 L260 150 L40 150 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+    '<circle cx="150" cy="95" r="70" fill="none" stroke="#4a4a4d" stroke-width="1.5"/><path d="M90 95 Q150 60 210 95 Q150 130 90 95 Z" fill="#2a2a2c"/>',
+    '<rect x="40" y="70" width="220" height="60" rx="28" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><circle cx="100" cy="100" r="6" fill="#4a4a4d"/><circle cx="140" cy="100" r="6" fill="#4a4a4d"/><circle cx="180" cy="100" r="6" fill="#4a4a4d"/><circle cx="220" cy="100" r="6" fill="#4a4a4d"/>'
+  ];
+  let currentImg = 0;
+  const mainSvg = document.getElementById('mainSvg');
+
+  function renderThumbs(){
+    document.getElementById('thumbRow').innerHTML = angles.map((a,i)=>`<div class="thumb ${i===currentImg?'active':''}" onclick="setImage(${i})"><svg viewBox="0 0 300 180">${a}</svg></div>`).join('');
+  }
+  function setImage(i){ currentImg=i; mainSvg.innerHTML=angles[i]; document.getElementById('galleryMain').classList.remove('zoomed'); renderThumbs(); }
+  function shiftImage(dir){ setImage((currentImg+dir+angles.length)%angles.length); }
+  renderThumbs();
+
+  // ===== SIZE SELECTION =====
+  let selectedSize = null;
+  const sizeBtns = document.querySelectorAll('.size-btn-pdp:not(.oos)');
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = 'UK ' + btn.textContent.trim();
+      document.getElementById('sizeError').style.display = 'none';
+      document.getElementById('stickySize').textContent = 'Stride Runner · ' + selectedSize;
+    });
+  });
+  // Pre-select UK 7 (already marked selected in HTML)
+  const preSelected = document.querySelector('.size-btn-pdp.selected');
+  if(preSelected) selectedSize = 'UK ' + preSelected.textContent.trim();
+
+  // ===== COLOR SELECTION =====
+  const colorSwatches = document.querySelectorAll('.color-swatch');
+  let selectedColor = 'Charcoal';
+  colorSwatches.forEach(sw => {
+    sw.addEventListener('click', () => {
+      colorSwatches.forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      selectedColor = sw.title;
+      document.querySelector('.selector-block .selector-label h4').textContent = 'Colour — ' + selectedColor;
+    });
+  });
+
+  // ===== SIZE ERROR BANNER =====
+  const sizeErrDiv = document.createElement('div');
+  sizeErrDiv.id = 'sizeError';
+  sizeErrDiv.style.cssText = 'display:none;color:#e05252;font-size:12px;margin-bottom:12px;padding:10px 14px;border:1px solid #e05252;';
+  sizeErrDiv.textContent = 'Please select a size before adding to cart.';
+  document.querySelector('.qty-cart-row').before(sizeErrDiv);
+
+  // ===== ADD TO CART =====
+  function addToCartPDP() {
+    if (!selectedSize) {
+      document.getElementById('sizeError').style.display = 'block';
+      document.querySelector('.size-grid-pdp').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    const qty = parseInt(document.getElementById('qty').textContent) || 1;
+    ELEVEN.addToCart({
+      sku: 'RN-001', name: 'Stride Runner', size: selectedSize,
+      color: selectedColor, price: 6499, shape: 0
+    });
+    // Override qty if > 1
+    if(qty > 1) {
+      const cart = ELEVEN.getCart();
+      const idx = cart.findIndex(i => i.sku === 'RN-001' && i.size === selectedSize);
+      if(idx >= 0) { cart[idx].qty = qty; ELEVEN.saveCart(cart); }
+    }
+    ELEVEN.showToast('Stride Runner added to cart');
+    ELEVEN.updateAllBadges();
+  }
+
+  function buyNow() {
+    if (!selectedSize) {
+      document.getElementById('sizeError').style.display = 'block';
+      document.querySelector('.size-grid-pdp').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    addToCartPDP();
+    window.location.href = 'checkout.html';
+  }
+
+  // Replace inline onclick handlers
+  document.querySelector('.btn-add-cart').onclick = addToCartPDP;
+  document.querySelector('.btn-buy-now').onclick = buyNow;
+  // Sticky bar
+  document.querySelector('.sticky-bar .btn-add-cart').onclick = addToCartPDP;
+
+  // ===== WISHLIST =====
+  const wishBtn = document.querySelector('.icon-row button');
+  function updateWishBtn() {
+    const inWish = ELEVEN.isWished('RN-001');
+    wishBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="${inWish?'currentColor':'none'}" stroke="currentColor" stroke-width="2" style="color:${inWish?'var(--gold)':'currentColor'}"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> ${inWish ? 'Saved' : 'Wishlist'}`;
+  }
+  wishBtn.addEventListener('click', () => {
+    ELEVEN.toggleWish('RN-001');
+    updateWishBtn();
+    ELEVEN.showToast(ELEVEN.isWished('RN-001') ? 'Added to wishlist' : 'Removed from wishlist');
+  });
+  updateWishBtn();
+
+  // ===== RELATED GRIDS =====
+  const shoeShapes = [
+    '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+    '<rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/>',
+    '<path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/>',
+    '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
+  ];
+  function buildCard(name, sku, price, shapeIdx){
+    const div = document.createElement('div');
+    div.className='product-card'; div.style.cursor='pointer';
+    div.onclick = () => window.location.href='product.html';
+    div.innerHTML=`<div class="card-art"><svg viewBox="0 0 300 180">${shoeShapes[shapeIdx%shoeShapes.length]}</svg></div><div class="card-body"><span class="mono">ELV-${sku}</span><h4>${name}</h4><span class="card-price">₹${price.toLocaleString('en-IN')}</span></div>`;
+    return div;
+  }
+  [['Velocity Mid','RN-007',5299,2],['Apex Trainer','RN-012',7299,0],['Sector One','CS-009',4599,1],['Glide Pro','RN-018',6899,3]].forEach(([n,s,p,sh])=>document.getElementById('relatedGrid').appendChild(buildCard(n,s,p,sh)));
+  [['Off-Court Low','CS-014',4999,1],['Drift Slide','SL-002',2199,3],['Form Low','CS-021',5099,1],['Loop Mid','CS-017',4799,2]].forEach(([n,s,p,sh])=>document.getElementById('recentGrid').appendChild(buildCard(n,s,p,sh)));
+
+  // ===== STICKY BAR =====
+  const stickyBar = document.getElementById('stickyBar');
+  const stickyLabel = document.createElement('span');
+  stickyLabel.id = 'stickySize';
+  stickyLabel.className = 'mono';
+  stickyLabel.style.fontSize = '13px';
+  stickyLabel.textContent = 'Stride Runner · ' + (selectedSize || 'Select size');
+  stickyBar.querySelector('.sticky-bar-left div').innerHTML = '<h6>Stride Runner</h6>';
+  stickyBar.querySelector('.sticky-bar-left div').appendChild(stickyLabel);
+
+  window.addEventListener('scroll', () => {
+    stickyBar.classList.toggle('show', window.scrollY > 600);
+  });
+</script>
+
+</body>
+</html>

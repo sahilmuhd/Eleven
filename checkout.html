@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Checkout — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C; --chalk:#F7F5F0; --charcoal:#1B1B1D; --charcoal-2:#232325;
+    --steel:#C7CCD1; --steel-dim:#8B9096; --blue:#2F6FED; --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
+  .nav-icons a{color:var(--steel-dim); text-decoration:none; font-size:13px; display:flex; align-items:center; gap:8px;}
+
+  .stepper{display:flex; align-items:center; gap:10px; padding:28px 48px 0;}
+  .step{display:flex; align-items:center; gap:8px; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:var(--steel-dim);}
+  .step.active{color:var(--chalk);}
+  .step .num{width:22px; height:22px; border-radius:50%; border:1px solid var(--steel-dim); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .step.active .num{background:var(--chalk); color:var(--ink); border-color:var(--chalk);}
+  .step.done .num{background:var(--blue); border-color:var(--blue); color:var(--chalk);}
+  .step-line{width:48px; height:1px; background:var(--line);}
+
+  .page-head{padding:24px 48px 0;}
+  .page-head h1{font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,5vw,48px); line-height:1;}
+
+  .checkout-layout{
+    display:grid; grid-template-columns:1fr 380px; gap:48px;
+    padding:36px 48px 100px; align-items:start;
+  }
+
+  .form-section{margin-bottom:36px;}
+  .form-section-head{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .form-section-head .num{
+    width:24px; height:24px; border-radius:50%; background:var(--charcoal); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px;
+  }
+  .form-section-head h3{font-size:16px; font-weight:600;}
+
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .form-field{display:flex; flex-direction:column; gap:6px;}
+  .form-field.full{grid-column:1 / 3;}
+  .form-field label{font-size:12px; color:var(--steel-dim); letter-spacing:0.03em;}
+  .form-field input, .form-field select{
+    background:var(--charcoal); border:1px solid var(--line); color:var(--chalk);
+    padding:12px 14px; font-size:14px; font-family:'Inter',sans-serif;
+  }
+  .form-field input:focus, .form-field select:focus{outline:none; border-color:var(--blue);}
+  .form-field input::placeholder{color:var(--steel-dim);}
+
+  .addr-options{display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
+  .addr-card{
+    border:1px solid var(--line); padding:14px 16px; cursor:pointer; display:flex; gap:12px; align-items:flex-start;
+  }
+  .addr-card.selected{border-color:var(--blue);}
+  .addr-card input{margin-top:3px; accent-color:var(--blue);}
+  .addr-card strong{display:block; font-size:14px; margin-bottom:3px;}
+  .addr-card span{font-size:12px; color:var(--steel-dim); line-height:1.5;}
+
+  .ship-options{display:flex; flex-direction:column; gap:10px;}
+  .ship-card{
+    border:1px solid var(--line); padding:16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  }
+  .ship-card.selected{border-color:var(--blue);}
+  .ship-card-left{display:flex; gap:12px; align-items:center;}
+  .ship-card input{accent-color:var(--blue);}
+  .ship-card strong{font-size:14px; display:block;}
+  .ship-card span{font-size:12px; color:var(--steel-dim);}
+  .ship-card .price{font-family:'JetBrains Mono',monospace; font-size:14px;}
+
+  .pay-options{display:flex; flex-direction:column; gap:10px;}
+  .pay-card{
+    border:1px solid var(--line); padding:16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  }
+  .pay-card.selected{border-color:var(--blue);}
+  .pay-card-left{display:flex; gap:12px; align-items:center; font-size:14px; font-weight:500;}
+  .pay-card input{accent-color:var(--blue);}
+  .pay-logos{display:flex; gap:8px; align-items:center; color:var(--steel-dim);}
+  .pay-detail{display:none; padding:16px; border:1px solid var(--line); border-top:none; margin-top:-1px;}
+  .pay-card.selected + .pay-detail.show{display:block;}
+
+  /* ===== SUMMARY ===== */
+  .summary-card{background:var(--charcoal); border:1px solid var(--line); padding:28px; position:sticky; top:90px;}
+  .summary-card h3{font-family:'Bebas Neue',sans-serif; font-size:22px; margin-bottom:20px;}
+  .summary-item{display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); align-items:center;}
+  .summary-item .item-art{width:56px; height:56px; background:linear-gradient(135deg, var(--charcoal-2), #161617); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .summary-item .item-art svg{width:75%;}
+  .summary-item .item-info{flex:1; min-width:0;}
+  .summary-item .item-info h5{font-size:13px; font-weight:600; margin-bottom:2px;}
+  .summary-item .item-info span{font-size:11px; color:var(--steel-dim);}
+  .summary-item .item-price{font-family:'JetBrains Mono',monospace; font-size:13px;}
+
+  .summary-row{display:flex; justify-content:space-between; font-size:13px; color:var(--steel-dim); padding:8px 0;}
+  .summary-row.total{color:var(--chalk); font-size:16px; font-weight:600; border-top:1px solid var(--line); margin-top:8px; padding-top:16px;}
+  .summary-row.total .mono{font-size:18px;}
+
+  .btn-place-order{
+    width:100%; background:var(--chalk); color:var(--ink); border:none;
+    padding:16px; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    cursor:pointer; margin-top:20px; transition:background .25s;
+  }
+  .btn-place-order:hover{background:var(--blue); color:var(--chalk);}
+
+  .secure-note{display:flex; align-items:center; justify-content:center; gap:8px; font-size:11px; color:var(--steel-dim); margin-top:14px;}
+
+
+  .form-field input.error, .form-field select.error{border-color:#e05252;}
+  .field-error{font-size:11px; color:#e05252; margin-top:3px; display:none;}
+  .form-field input.error ~ .field-error,
+  .form-field select.error ~ .field-error{display:block;}
+
+  @media (max-width:900px){
+    nav{padding:16px 20px;}
+    .stepper, .page-head{padding-left:20px; padding-right:20px;}
+    .checkout-layout{grid-template-columns:1fr; padding:24px 20px 60px;}
+    .summary-card{position:static;}
+    .form-grid{grid-template-columns:1fr;}
+    .form-field.full{grid-column:1;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ELEVEN</a>
+  <div class="nav-icons">
+    <a href="cart.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back to cart</a>
+  </div>
+</nav>
+
+<div class="stepper">
+  <div class="step done"><span class="num">✓</span> Cart</div>
+  <div class="step-line"></div>
+  <div class="step active"><span class="num">2</span> Checkout</div>
+  <div class="step-line"></div>
+  <div class="step"><span class="num">3</span> Confirmation</div>
+</div>
+
+<div class="page-head">
+  <h1 class="display">Checkout</h1>
+</div>
+
+<div class="checkout-layout">
+
+  <div>
+    <div class="form-section">
+      <div class="form-section-head"><span class="num">1</span><h3>Contact information</h3></div>
+      <div class="form-grid">
+        <div class="form-field" id="field-email"><label>Email address</label><input type="email" placeholder="name@email.com" id="inp-email"><span class="field-error">Enter a valid email address</span></div>
+        <div class="form-field" id="field-phone"><label>Phone number</label><input type="tel" placeholder="+91 98765 43210" id="inp-phone"><span class="field-error">Enter a valid phone number</span></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-head"><span class="num">2</span><h3>Shipping address</h3></div>
+      <div class="addr-options">
+        <label class="addr-card selected">
+          <input type="radio" name="addr" checked>
+          <div><strong>Home</strong><span>142, 4th Cross, Kammanahalli, Bangalore, Karnataka 560084</span></div>
+        </label>
+        <label class="addr-card">
+          <input type="radio" name="addr">
+          <div><strong>Add a new address</strong><span>Enter a different delivery address for this order</span></div>
+        </label>
+      </div>
+      <div class="form-grid">
+        <div class="form-field full"><label>Full name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-field full"><label>Address line</label><input type="text" placeholder="House no, street, area"></div>
+        <div class="form-field"><label>City</label><input type="text" placeholder="Bangalore"></div>
+        <div class="form-field"><label>State</label>
+          <select><option>Karnataka</option><option>Maharashtra</option><option>Tamil Nadu</option><option>Delhi</option><option>Other</option></select>
+        </div>
+        <div class="form-field"><label>PIN code</label><input type="text" placeholder="560084"></div>
+        <div class="form-field"><label>Landmark (optional)</label><input type="text" placeholder="Near..."></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-head"><span class="num">3</span><h3>Shipping method</h3></div>
+      <div class="ship-options">
+        <label class="ship-card selected">
+          <div class="ship-card-left"><input type="radio" name="ship" checked><div><strong>Standard delivery</strong><span>3–6 business days</span></div></div>
+          <span class="price mono">Free</span>
+        </label>
+        <label class="ship-card">
+          <div class="ship-card-left"><input type="radio" name="ship"><div><strong>Express delivery</strong><span>1–2 business days</span></div></div>
+          <span class="price mono">₹199</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-head"><span class="num">4</span><h3>Payment method</h3></div>
+      <div class="pay-options">
+        <label class="pay-card selected" onclick="selectPayment(this)">
+          <div class="pay-card-left"><input type="radio" name="pay" checked> UPI</div>
+          <div class="pay-logos mono" style="font-size:11px;">GPay · PhonePe · Paytm</div>
+        </label>
+        <div class="pay-detail show">
+          <div class="form-field"><label>UPI ID</label><input type="text" placeholder="yourname@upi"></div>
+        </div>
+
+        <label class="pay-card" onclick="selectPayment(this)">
+          <div class="pay-card-left"><input type="radio" name="pay"> Credit / debit card</div>
+          <div class="pay-logos mono" style="font-size:11px;">Visa · Mastercard · RuPay</div>
+        </label>
+        <div class="pay-detail">
+          <div class="form-grid">
+            <div class="form-field full"><label>Card number</label><input type="text" placeholder="0000 0000 0000 0000"></div>
+            <div class="form-field"><label>Expiry</label><input type="text" placeholder="MM / YY"></div>
+            <div class="form-field"><label>CVV</label><input type="text" placeholder="•••"></div>
+          </div>
+        </div>
+
+        <label class="pay-card" onclick="selectPayment(this)">
+          <div class="pay-card-left"><input type="radio" name="pay"> Cash on delivery</div>
+          <span class="mono" style="font-size:11px; color:var(--steel-dim);">Orders under ₹10,000</span>
+        </label>
+        <div class="pay-detail"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-card">
+    <h3>Order summary</h3>
+
+    <div id="summaryItems"></div>
+
+    <div class="summary-row"><span>Subtotal</span><span class="mono">₹13,997</span></div>
+    <div class="summary-row"><span>Discount (BUILT10)</span><span class="mono" style="color:var(--gold);">−₹1,400</span></div>
+    <div class="summary-row"><span>Shipping</span><span class="mono" id="shipCostVal">Free</span></div>
+    <div class="summary-row total"><span>Total</span><span class="mono" id="checkoutTotal">₹12,597</span></div>
+
+    <button class="btn-place-order" onclick="placeOrder()">Place order</button>
+    <div class="secure-note">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg>
+      Secured and encrypted checkout
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== ELEVEN CART — shared localStorage module ===== */
+const ELEVEN = {
+  CART_KEY: 'eleven_cart',
+  WISH_KEY: 'eleven_wish',
+
+  getCart() {
+    try { return JSON.parse(localStorage.getItem(this.CART_KEY)) || []; } catch { return []; }
+  },
+  saveCart(cart) {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    this.updateAllBadges();
+  },
+  addToCart(item) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === item.sku && i.size === item.size);
+    if (idx >= 0) cart[idx].qty += item.qty || 1;
+    else cart.push({ ...item, qty: item.qty || 1 });
+    this.saveCart(cart);
+  },
+  removeFromCart(sku, size) {
+    this.saveCart(this.getCart().filter(i => !(i.sku === sku && i.size === size)));
+  },
+  changeQty(sku, size, delta) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === sku && i.size === size);
+    if (idx >= 0) {
+      cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+      this.saveCart(cart);
+    }
+  },
+  clearCart() { this.saveCart([]); },
+
+  getWishlist() {
+    try { return JSON.parse(localStorage.getItem(this.WISH_KEY)) || []; } catch { return []; }
+  },
+  toggleWish(sku) {
+    const w = this.getWishlist();
+    const idx = w.indexOf(sku);
+    if (idx >= 0) w.splice(idx, 1); else w.push(sku);
+    localStorage.setItem(this.WISH_KEY, JSON.stringify(w));
+    return w.includes(sku);
+  },
+  isWished(sku) { return this.getWishlist().includes(sku); },
+
+  cartCount() { return this.getCart().reduce((s, i) => s + i.qty, 0); },
+  cartSubtotal() { return this.getCart().reduce((s, i) => s + i.price * i.qty, 0); },
+
+  updateAllBadges() {
+    const count = this.cartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  },
+
+  fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); },
+
+  showToast(msg) {
+    let t = document.getElementById('eleven-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'eleven-toast';
+      t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;
+        letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;
+        font-family:'Inter',sans-serif;`;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+};
+
+// Init badges on every page load
+document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
+
+</script>
+<script>
+  const shoeShapes = [
+    '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+    '<rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/>',
+    '<path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/>',
+    '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
+  ];
+
+  function getShape(sku) {
+    if(sku.startsWith('RN')) return 0;
+    if(sku.startsWith('CS')) return 1;
+    if(sku.startsWith('SL')) return 3;
+    return 2;
+  }
+
+  // Render order summary from real cart
+  const cart = ELEVEN.getCart();
+  const discountPct = parseFloat(localStorage.getItem('eleven_discount')) || 0;
+  const couponCode = localStorage.getItem('eleven_coupon') || '';
+
+  const summaryContainer = document.getElementById('summaryItems');
+  if(summaryContainer) {
+    if(cart.length === 0) {
+      summaryContainer.innerHTML = '<p style="font-size:13px;color:var(--steel-dim);padding:12px 0;">Your cart is empty. <a href='shop.html' style='color:var(--blue)'>Go shopping</a></p>';
+    } else {
+      summaryContainer.innerHTML = cart.map(it => `
+        <div class="summary-item">
+          <div class="item-art"><svg viewBox="0 0 300 180">${shoeShapes[getShape(it.sku)]}</svg></div>
+          <div class="item-info"><h5>${it.name}</h5><span>${it.size} · Qty ${it.qty}</span></div>
+          <span class="item-price">${ELEVEN.fmt(it.price * it.qty)}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function updateCheckoutTotals() {
+    const subtotal = ELEVEN.cartSubtotal();
+    const isExpress = document.querySelector('.ship-card.selected strong')?.textContent?.includes('Express');
+    const shipCost = isExpress ? 199 : 0;
+    const discount = subtotal * (discountPct/100);
+    const total = subtotal - discount + shipCost;
+
+    // Update or create rows
+    const subtotalEl = document.querySelector('.summary-row:first-of-type .mono');
+    // Rebuild totals section
+    const totalsEl = document.getElementById('checkoutTotals');
+    if(totalsEl) {
+      const discountRow = discountPct > 0 && couponCode
+        ? `<div class="summary-row"><span>Discount (${couponCode})</span><span class="mono" style="color:var(--gold);">−${ELEVEN.fmt(discount)}</span></div>`
+        : '';
+      totalsEl.innerHTML = `
+        <div class="summary-row"><span>Subtotal</span><span class="mono">${ELEVEN.fmt(subtotal)}</span></div>
+        ${discountRow}
+        <div class="summary-row"><span>Shipping</span><span class="mono" id="shipCostVal">${shipCost > 0 ? ELEVEN.fmt(shipCost) : 'Free'}</span></div>
+        <div class="summary-row total"><span>Total</span><span class="mono" id="checkoutTotal">${ELEVEN.fmt(total)}</span></div>
+      `;
+    }
+  }
+
+  // Wrap totals in a div we can update
+  const placeBtn = document.querySelector('.btn-place-order');
+  if(placeBtn) {
+    const totalsWrapper = document.createElement('div');
+    totalsWrapper.id = 'checkoutTotals';
+    // Find the existing static rows and replace
+    const summaryCard = document.querySelector('.summary-card');
+    const staticRows = summaryCard.querySelectorAll('.summary-row');
+    if(staticRows.length) {
+      const firstRow = staticRows[0];
+      const lastRow = staticRows[staticRows.length-1];
+      // Insert wrapper before first row
+      firstRow.parentNode.insertBefore(totalsWrapper, firstRow);
+      // Move all rows into wrapper
+      [...staticRows].forEach(r => totalsWrapper.appendChild(r));
+    }
+    updateCheckoutTotals();
+  }
+
+  function selectPayment(el){
+    document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.pay-detail').forEach(d => d.classList.remove('show'));
+    el.classList.add('selected');
+    el.nextElementSibling.classList.add('show');
+    el.querySelector('input').checked = true;
+  }
+
+  document.querySelectorAll('.ship-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.ship-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      card.querySelector('input').checked = true;
+      updateCheckoutTotals();
+    });
+  });
+
+  document.querySelectorAll('.addr-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.addr-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      card.querySelector('input').checked = true;
+    });
+  });
+
+  function placeOrder(){
+    let valid = true;
+    const email = document.getElementById('inp-email');
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())){
+      if(email) email.classList.add('error'); valid = false;
+    } else email.classList.remove('error');
+
+    const phone = document.getElementById('inp-phone');
+    if(!phone || phone.value.trim().replace(/\D/g,'').length < 10){
+      if(phone) phone.classList.add('error'); valid = false;
+    } else phone.classList.remove('error');
+
+    if(!valid){
+      const firstErr = document.querySelector('input.error');
+      if(firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    // Save order details for confirmation page
+    localStorage.setItem('eleven_order_email', email.value.trim());
+    localStorage.setItem('eleven_order_total', document.getElementById('checkoutTotal')?.textContent || '');
+    localStorage.setItem('eleven_order_id', 'ELV-2026-' + Math.floor(10000 + Math.random()*90000));
+    // Clear cart after order
+    ELEVEN.clearCart();
+    window.location.href = 'confirmation.html';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C; --chalk:#F7F5F0; --charcoal:#1B1B1D; --charcoal-2:#232325;
+    --steel:#C7CCD1; --steel-dim:#8B9096; --blue:#2F6FED; --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85;}
+  .nav-links a:hover, .nav-links a.active{opacity:1; color:var(--blue);}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px;}
+
+  /* PAGE HEADER */
+  .page-head{
+    padding:72px 48px 0;
+    border-bottom:1px solid var(--line);
+    padding-bottom:40px;
+  }
+  .breadcrumb{font-size:12px; color:var(--steel-dim); margin-bottom:14px;}
+  .breadcrumb a{color:var(--steel-dim); text-decoration:none;}
+  .breadcrumb span{color:var(--chalk);}
+  .page-head h1{font-family:'Bebas Neue',sans-serif; font-size:clamp(48px,8vw,96px); line-height:0.92; letter-spacing:0.01em;}
+  .page-head .sub{color:var(--steel-dim); font-size:14px; margin-top:16px; max-width:480px; line-height:1.6;}
+
+  /* LAYOUT */
+  .contact-layout{
+    display:grid;
+    grid-template-columns:1fr 480px;
+    gap:0;
+    min-height:calc(100vh - 300px);
+  }
+
+  /* LEFT: channels */
+  .contact-left{
+    padding:64px 48px 80px;
+    border-right:1px solid var(--line);
+  }
+  .channels{display:flex; flex-direction:column; gap:2px; margin-bottom:56px;}
+  .channel{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 0;
+    border-bottom:1px solid var(--line);
+    text-decoration:none;
+    color:var(--chalk);
+    transition:padding-left .25s;
+    cursor:pointer;
+  }
+  .channel:hover{padding-left:8px;}
+  .channel-left{display:flex; align-items:center; gap:18px;}
+  .channel-icon{
+    width:44px; height:44px;
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--steel-dim);
+    flex-shrink:0;
+    transition:border-color .25s, color .25s;
+  }
+  .channel:hover .channel-icon{border-color:var(--blue); color:var(--blue);}
+  .channel-info strong{display:block; font-size:15px; font-weight:600; margin-bottom:3px;}
+  .channel-info span{font-size:12px; color:var(--steel-dim);}
+  .channel-arrow{color:var(--steel-dim); transition:transform .25s, color .25s;}
+  .channel:hover .channel-arrow{transform:translateX(4px); color:var(--chalk);}
+
+  /* FAQ */
+  .faq-section{margin-top:0;}
+  .section-label{font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:24px; font-weight:500;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 0; cursor:pointer;
+    font-size:14px; font-weight:500;
+    gap:16px;
+  }
+  .faq-head svg{flex-shrink:0; color:var(--steel-dim); transition:transform .25s;}
+  .faq-item.open .faq-head svg{transform:rotate(45deg);}
+  .faq-body{display:none; padding-bottom:20px; font-size:13px; color:var(--steel-dim); line-height:1.7; max-width:500px;}
+  .faq-item.open .faq-body{display:block;}
+
+  /* RIGHT: form */
+  .contact-right{
+    padding:64px 48px 80px;
+    background:var(--charcoal);
+  }
+  .form-head{margin-bottom:32px;}
+  .form-head h2{font-family:'Bebas Neue',sans-serif; font-size:32px; margin-bottom:8px;}
+  .form-head p{font-size:13px; color:var(--steel-dim); line-height:1.5;}
+
+  .topic-chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;}
+  .topic-chip{
+    font-size:12px; font-family:'JetBrains Mono',monospace; letter-spacing:0.03em;
+    border:1px solid var(--line); background:transparent; color:var(--steel-dim);
+    padding:8px 14px; cursor:pointer; transition:all .2s;
+  }
+  .topic-chip:hover{border-color:var(--steel-dim); color:var(--chalk);}
+  .topic-chip.selected{border-color:var(--blue); color:var(--chalk); background:rgba(47,111,237,0.08);}
+
+  .form-field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .form-field label{font-size:12px; color:var(--steel-dim); letter-spacing:0.03em;}
+  .form-field input, .form-field textarea, .form-field select{
+    background:var(--charcoal-2); border:1px solid var(--line); color:var(--chalk);
+    padding:12px 14px; font-size:14px; font-family:'Inter',sans-serif;
+    transition:border-color .2s;
+  }
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus{
+    outline:none; border-color:var(--blue);
+  }
+  .form-field input::placeholder, .form-field textarea::placeholder{color:var(--steel-dim);}
+  .form-field input.error, .form-field textarea.error{border-color:#e05252;}
+  .field-error{font-size:11px; color:#e05252; display:none;}
+  .form-field input.error ~ .field-error,
+  .form-field textarea.error ~ .field-error{display:block;}
+  .form-field textarea{resize:vertical; min-height:120px; line-height:1.5;}
+
+  .order-field{display:none;}
+  .order-field.show{display:flex;}
+
+  .btn-submit{
+    width:100%; background:var(--chalk); color:var(--ink); border:none;
+    padding:16px; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600;
+    cursor:pointer; margin-top:8px; transition:all .25s;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-submit:hover{background:var(--blue); color:var(--chalk);}
+
+  .form-note{font-size:11px; color:var(--steel-dim); margin-top:12px; text-align:center; line-height:1.5;}
+
+  /* SUCCESS STATE */
+  .success-state{
+    display:none;
+    flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 0;
+  }
+  .success-state.show{display:flex;}
+  .success-icon{
+    width:56px; height:56px; border-radius:50%; background:rgba(47,111,237,0.12);
+    border:1px solid rgba(47,111,237,0.3);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--blue); margin-bottom:24px;
+  }
+  .success-state h3{font-family:'Bebas Neue',sans-serif; font-size:28px; margin-bottom:10px;}
+  .success-state p{font-size:13px; color:var(--steel-dim); max-width:300px; line-height:1.6; margin-bottom:24px;}
+  .btn-ghost{
+    font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    padding:12px 24px; border:1px solid var(--line); background:transparent; color:var(--chalk);
+    cursor:pointer; transition:all .25s; font-family:'Inter',sans-serif;
+  }
+  .btn-ghost:hover{border-color:var(--steel-dim);}
+
+  /* FOOTER STRIP */
+  .footer-strip{
+    border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+    padding:28px 48px; font-size:12px; color:var(--steel-dim);
+  }
+  .footer-strip a{color:var(--steel-dim); text-decoration:none;}
+  .footer-strip a:hover{color:var(--chalk);}
+
+  @media(max-width:900px){
+    nav{padding:16px 20px;}
+    .nav-links{display:none;}
+    .page-head{padding:48px 20px 32px;}
+    .contact-layout{grid-template-columns:1fr;}
+    .contact-left{padding:40px 20px 48px; border-right:none; border-bottom:1px solid var(--line);}
+    .contact-right{padding:40px 20px 60px;}
+    .footer-strip{padding:20px; flex-direction:column; gap:8px; text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="index.html#new">New arrivals</a></li>
+    <li><a href="index.html#drops">Limited</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button aria-label="Cart" onclick="window.location.href='cart.html'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <span>Contact</span></div>
+  <h1 class="display">Get in<br>touch</h1>
+  <p class="sub">Questions about an order, sizing, or a collaboration idea? We're a small team — real people reply to every message.</p>
+</div>
+
+<div class="contact-layout">
+
+  <div class="contact-left">
+    <div class="channels">
+      <a class="channel" href="https://wa.me/919876543210" target="_blank" rel="noopener">
+        <div class="channel-left">
+          <div class="channel-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div class="channel-info">
+            <strong>WhatsApp</strong>
+            <span>Fastest response · Usually replies in under 2 hours</span>
+          </div>
+        </div>
+        <div class="channel-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </a>
+
+      <a class="channel" href="mailto:hello@elevenfootwear.in">
+        <div class="channel-left">
+          <div class="channel-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="channel-info">
+            <strong>Email</strong>
+            <span>hello@elevenfootwear.in · Reply within 24 hours</span>
+          </div>
+        </div>
+        <div class="channel-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </a>
+
+      <a class="channel" href="https://instagram.com" target="_blank" rel="noopener">
+        <div class="channel-left">
+          <div class="channel-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <div class="channel-info">
+            <strong>Instagram</strong>
+            <span>@elevenfootwear · DMs open for drop info and collabs</span>
+          </div>
+        </div>
+        <div class="channel-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </a>
+    </div>
+
+    <div class="faq-section" id="faq">
+      <div class="section-label">Common questions</div>
+
+      <div class="faq-item">
+        <div class="faq-head" onclick="toggleFaq(this)">
+          How do I track my order?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-body">Once your order ships, you'll get an SMS and email with a tracking link. Delivery takes 3–6 business days for standard and 1–2 for express. For any issues, drop us a WhatsApp — we'll sort it out same day.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-head" onclick="toggleFaq(this)">
+          What's the return and exchange policy?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-body">Returns and exchanges are accepted within 14 days of delivery, as long as the pair is unworn and in original packaging. Limited edition drops are final sale. To initiate a return, use the form on this page or WhatsApp us your order ID.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-head" onclick="toggleFaq(this)">
+          How does ELEVEN sizing run?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-body">All sizes are in UK. Our runners and mid-tops tend to run true to size. Casual silhouettes run slightly wide — if you're between sizes, go down. When in doubt, share your foot length in cm via WhatsApp and we'll guide you to the right fit.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-head" onclick="toggleFaq(this)">
+          Do you ship outside India?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-body">Not yet — we're India-only for now. International shipping is on our roadmap for later this year. If you're outside India and want to be notified when it launches, send us your email via the form and we'll add you to the list.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-head" onclick="toggleFaq(this)">
+          Can I collaborate with ELEVEN?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-body">We're open to the right collabs — artists, photographers, stylists, and brands whose aesthetic aligns with ours. Use the contact form, select "Collaboration" as the topic, and tell us what you have in mind. We read every pitch.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-right">
+    <div id="contactForm">
+      <div class="form-head">
+        <h2 class="display">Send a message</h2>
+        <p>We aim to reply within 24 hours on business days.</p>
+      </div>
+
+      <div class="topic-chips" id="topicChips">
+        <button class="topic-chip" onclick="selectTopic(this, 'Order issue')">Order issue</button>
+        <button class="topic-chip" onclick="selectTopic(this, 'Returns')">Returns</button>
+        <button class="topic-chip" onclick="selectTopic(this, 'Sizing')">Sizing</button>
+        <button class="topic-chip" onclick="selectTopic(this, 'Collaboration')">Collaboration</button>
+        <button class="topic-chip" onclick="selectTopic(this, 'Other')">Other</button>
+      </div>
+
+      <div class="form-field order-field" id="orderField">
+        <label>Order ID</label>
+        <input type="text" id="inp-orderid" placeholder="ELV-2026-XXXXX">
+      </div>
+
+      <div class="form-field">
+        <label>Your name</label>
+        <input type="text" id="inp-name" placeholder="Full name">
+        <span class="field-error">Please enter your name</span>
+      </div>
+
+      <div class="form-field">
+        <label>Email address</label>
+        <input type="email" id="inp-email" placeholder="name@email.com">
+        <span class="field-error">Enter a valid email address</span>
+      </div>
+
+      <div class="form-field">
+        <label>Message</label>
+        <textarea id="inp-message" placeholder="Tell us what's up — the more detail, the faster we can help."></textarea>
+        <span class="field-error">Please write a message</span>
+      </div>
+
+      <button class="btn-submit" onclick="submitForm()">Send message</button>
+      <p class="form-note">By sending a message you agree to be contacted at the email address provided.</p>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3 class="display">Message sent</h3>
+      <p>We'll get back to you at <strong id="successEmail"></strong> within 24 hours. Check your spam folder if you don't hear from us.</p>
+      <button class="btn-ghost" onclick="resetForm()">Send another message</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-strip">
+  <span>© 2026 ELEVEN Footgear Hub · Kammanahalli, Bangalore</span>
+  <div style="display:flex; gap:24px;">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="mailto:hello@elevenfootwear.in">hello@elevenfootwear.in</a>
+  </div>
+</div>
+
+<script>
+/* ===== ELEVEN CART — shared localStorage module ===== */
+const ELEVEN = {
+  CART_KEY: 'eleven_cart',
+  WISH_KEY: 'eleven_wish',
+
+  getCart() {
+    try { return JSON.parse(localStorage.getItem(this.CART_KEY)) || []; } catch { return []; }
+  },
+  saveCart(cart) {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    this.updateAllBadges();
+  },
+  addToCart(item) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === item.sku && i.size === item.size);
+    if (idx >= 0) cart[idx].qty += item.qty || 1;
+    else cart.push({ ...item, qty: item.qty || 1 });
+    this.saveCart(cart);
+  },
+  removeFromCart(sku, size) {
+    this.saveCart(this.getCart().filter(i => !(i.sku === sku && i.size === size)));
+  },
+  changeQty(sku, size, delta) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === sku && i.size === size);
+    if (idx >= 0) {
+      cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+      this.saveCart(cart);
+    }
+  },
+  clearCart() { this.saveCart([]); },
+
+  getWishlist() {
+    try { return JSON.parse(localStorage.getItem(this.WISH_KEY)) || []; } catch { return []; }
+  },
+  toggleWish(sku) {
+    const w = this.getWishlist();
+    const idx = w.indexOf(sku);
+    if (idx >= 0) w.splice(idx, 1); else w.push(sku);
+    localStorage.setItem(this.WISH_KEY, JSON.stringify(w));
+    return w.includes(sku);
+  },
+  isWished(sku) { return this.getWishlist().includes(sku); },
+
+  cartCount() { return this.getCart().reduce((s, i) => s + i.qty, 0); },
+  cartSubtotal() { return this.getCart().reduce((s, i) => s + i.price * i.qty, 0); },
+
+  updateAllBadges() {
+    const count = this.cartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  },
+
+  fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); },
+
+  showToast(msg) {
+    let t = document.getElementById('eleven-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'eleven-toast';
+      t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;
+        letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;
+        font-family:'Inter',sans-serif;`;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+};
+
+// Init badges on every page load
+document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
+
+</script>
+<script>
+  let selectedTopic = '';
+
+  function selectTopic(btn, topic) {
+    document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTopic = topic;
+    const orderField = document.getElementById('orderField');
+    if(topic === 'Order issue' || topic === 'Returns') {
+      orderField.classList.add('show');
+    } else {
+      orderField.classList.remove('show');
+    }
+  }
+
+  function submitForm() {
+    let valid = true;
+
+    const name = document.getElementById('inp-name');
+    if(!name.value.trim()) { name.classList.add('error'); valid = false; } else name.classList.remove('error');
+
+    const email = document.getElementById('inp-email');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { email.classList.add('error'); valid = false; } else email.classList.remove('error');
+
+    const msg = document.getElementById('inp-message');
+    if(!msg.value.trim()) { msg.classList.add('error'); valid = false; } else msg.classList.remove('error');
+
+    if(!valid) {
+      const firstErr = document.querySelector('input.error, textarea.error');
+      if(firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+
+    document.getElementById('successEmail').textContent = email.value.trim();
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('successState').classList.add('show');
+  }
+
+  function resetForm() {
+    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-email').value = '';
+    document.getElementById('inp-message').value = '';
+    document.getElementById('inp-orderid').value = '';
+    document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('selected'));
+    document.getElementById('orderField').classList.remove('show');
+    selectedTopic = '';
+    document.getElementById('contactForm').style.display = '';
+    document.getElementById('successState').classList.remove('show');
+  }
+
+  function toggleFaq(head) {
+    const item = head.parentElement;
+    item.classList.toggle('open');
+  }
+
+  // Pre-select topic from URL hash
+  if(window.location.hash === '#faq') {
+    document.querySelector('.faq-section').scrollIntoView({ behavior:'smooth' });
+  }
+</script>
+
+</body>
+</html>

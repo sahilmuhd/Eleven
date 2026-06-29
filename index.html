@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ELEVEN — Built Different</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --chalk:#F7F5F0;
+    --charcoal:#1B1B1D;
+    --steel:#C7CCD1;
+    --steel-dim:#8B9096;
+    --blue:#2F6FED;
+    --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  /* ===== NAV ===== */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 48px;
+    mix-blend-mode:difference;
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85; transition:opacity .25s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px;}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    height:100vh;
+    min-height:680px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:0 48px;
+    background:
+      radial-gradient(ellipse 60% 50% at 75% 30%, rgba(47,111,237,0.10), transparent 60%),
+      var(--ink);
+  }
+  .hero-grid-line{
+    position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px);
+    background-size: 100% 120px;
+    opacity:0.5;
+  }
+  .stride-wrap{
+    position:relative;
+    width:100%;
+  }
+  .stride-top, .stride-bottom{
+    display:flex;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(64px, 13vw, 168px);
+    line-height:0.86;
+    letter-spacing:0.01em;
+    white-space:nowrap;
+  }
+  .stride-top{justify-content:flex-start; transform:translateX(0);}
+  .stride-bottom{justify-content:flex-end; color:var(--steel);}
+  .seam{
+    height:1px; width:100%;
+    background:linear-gradient(90deg, transparent, var(--chalk) 50%, transparent);
+    opacity:0.35;
+    margin:6px 0;
+    transform-origin:left;
+  }
+  .hero-sub-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:28px;
+  }
+  .hero-tag{
+    font-size:14px;
+    color:var(--steel-dim);
+    max-width:340px;
+    line-height:1.5;
+  }
+  .hero-tag .mono{color:var(--gold); font-size:12px; display:block; margin-bottom:8px; letter-spacing:0.08em;}
+  .hero-ctas{display:flex; gap:14px;}
+  .btn{
+    font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600;
+    padding:15px 30px;
+    border-radius:2px;
+    cursor:pointer;
+    border:1px solid var(--chalk);
+    background:transparent;
+    color:var(--chalk);
+    transition:all .3s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .btn.primary{background:var(--chalk); color:var(--ink);}
+  .btn.primary:hover{background:var(--blue); border-color:var(--blue); color:var(--chalk);}
+  .btn:not(.primary):hover{background:var(--chalk); color:var(--ink);}
+
+  .hero-sneaker{
+    position:absolute;
+    right:6%;
+    top:50%;
+    transform:translateY(-46%) rotate(-8deg);
+    width:min(38vw, 560px);
+    z-index:1;
+    pointer-events:none;
+  }
+  .hero-sneaker path{
+    fill:none;
+    stroke:var(--steel);
+    stroke-width:1.4;
+    stroke-dasharray:2400;
+    stroke-dashoffset:2400;
+    animation: draw 2.6s ease forwards 0.3s;
+  }
+  .hero-sneaker .fillshape{
+    fill:var(--charcoal);
+    stroke:none;
+    opacity:0;
+    animation: fadein 1s ease forwards 1.8s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes fadein{ to{ opacity:1; } }
+
+  .scroll-cue{
+    position:absolute; bottom:36px; left:48px;
+    display:flex; align-items:center; gap:10px;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel-dim);
+  }
+  .scroll-cue::after{
+    content:''; width:1px; height:36px; background:var(--steel-dim);
+    animation:scrolldown 1.8s ease-in-out infinite;
+  }
+  @keyframes scrolldown{ 0%,100%{transform:scaleY(1); opacity:0.4;} 50%{transform:scaleY(0.4); opacity:1;} }
+
+  /* ===== SECTION SHELL ===== */
+  section{padding:120px 48px;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:56px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:24px;
+  }
+  .eyebrow{font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:500;}
+  .section-title{font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,5vw,56px); line-height:1;}
+  .section-count{font-size:13px; color:var(--steel-dim);}
+
+  /* ===== FEATURED COLLECTIONS — asymmetric layout ===== */
+  .collections-grid{
+    display:grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap:2px;
+    height:640px;
+  }
+  .collection-tile{
+    position:relative;
+    overflow:hidden;
+    background:var(--charcoal);
+    display:flex;
+    align-items:flex-end;
+    padding:28px;
+    cursor:pointer;
+  }
+  .collection-tile:nth-child(1){grid-row:1 / 3;}
+  .collection-tile .placeholder-art{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .6s cubic-bezier(.22,1,.36,1);
+  }
+  .collection-tile:hover .placeholder-art{transform:scale(1.06);}
+  .collection-tile::before{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.75) 100%);
+    z-index:1;
+  }
+  .tile-label{position:relative; z-index:2;}
+  .tile-label .mono{font-size:11px; color:var(--gold); letter-spacing:0.08em; display:block; margin-bottom:6px;}
+  .tile-label h3{font-family:'Bebas Neue',sans-serif; font-size:28px;}
+
+  /* ===== NEW ARRIVALS — horizontal scroll rail ===== */
+  .rail-scroll{
+    display:flex;
+    gap:24px;
+    overflow-x:auto;
+    padding-bottom:8px;
+    scrollbar-width:none;
+  }
+  .rail-scroll::-webkit-scrollbar{display:none;}
+  .product-card{
+    flex:0 0 300px;
+    background:var(--charcoal);
+    border:1px solid var(--line);
+    transition:border-color .3s;
+  }
+  .product-card:hover{border-color:var(--steel-dim);}
+  .card-art{
+    height:280px;
+    background:linear-gradient(135deg, #232325, #161617);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .card-art svg{width:70%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art svg{transform:translateY(-6px) scale(1.04);}
+  .badge{
+    position:absolute; top:14px; left:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:5px 10px; background:var(--gold); color:var(--ink); font-weight:500;
+  }
+  .card-body{padding:18px 18px 20px;}
+  .card-body .mono{font-size:11px; color:var(--steel-dim); letter-spacing:0.04em;}
+  .card-body h4{font-size:16px; font-weight:600; margin:6px 0 8px;}
+  .card-price-row{display:flex; justify-content:space-between; align-items:center; margin-top:14px;}
+  .card-price{font-family:'JetBrains Mono',monospace; font-size:15px;}
+  .card-sizes{display:flex; gap:5px; margin-top:10px;}
+  .size-pip{font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--steel-dim); border:1px solid var(--line); padding:3px 6px;}
+
+  /* ===== WHY ELEVEN — 3 col ===== */
+  .why-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);}
+  .why-item{background:var(--ink); padding:48px 36px;}
+  .why-item .mono{font-size:12px; color:var(--gold); letter-spacing:0.1em;}
+  .why-item h3{font-family:'Bebas Neue',sans-serif; font-size:24px; margin:14px 0 12px;}
+  .why-item p{font-size:14px; color:var(--steel-dim); line-height:1.6;}
+
+  /* ===== LIMITED DROP — full bleed banner ===== */
+  .drop-banner{
+    position:relative;
+    background:var(--charcoal);
+    padding:100px 48px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .drop-banner::before{
+    content:'';
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,163,104,0.08), transparent 70%);
+  }
+  .drop-content{position:relative; z-index:1; max-width:640px; margin:0 auto;}
+  .drop-content .eyebrow{justify-content:center; display:flex; align-items:center; gap:8px;}
+  .drop-content .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .drop-content h2{font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,6vw,64px); line-height:1.05; margin:18px 0;}
+  .countdown{display:flex; gap:24px; justify-content:center; margin:32px 0;}
+  .countdown div{text-align:center;}
+  .countdown .num{font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:500;}
+  .countdown .lbl{font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel-dim); margin-top:4px;}
+
+  /* ===== FOOTER ===== */
+  footer{padding:80px 48px 32px; border-top:1px solid var(--line);}
+  .footer-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:48px; margin-bottom:64px;}
+  .footer-brand .display{font-size:28px; margin-bottom:14px;}
+  .footer-brand p{font-size:13px; color:var(--steel-dim); max-width:260px; line-height:1.6;}
+  .footer-col h5{font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim); margin-bottom:16px;}
+  .footer-col a{display:block; color:var(--chalk); text-decoration:none; font-size:14px; margin-bottom:10px; opacity:0.85;}
+  .footer-col a:hover{opacity:1; color:var(--blue);}
+  .footer-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:24px; border-top:1px solid var(--line); font-size:12px; color:var(--steel-dim);}
+
+  @media (max-width:900px){
+    nav{padding:18px 22px;}
+    .nav-links{display:none;}
+    section{padding:80px 22px;}
+    .hero{padding:0 22px;}
+    .hero-sneaker{display:none;}
+    .collections-grid{grid-template-columns:1fr; grid-template-rows:none; height:auto;}
+    .collection-tile{height:220px;}
+    .collection-tile:nth-child(1){grid-row:auto; height:300px;}
+    .why-grid{grid-template-columns:1fr;}
+    .footer-top{grid-template-columns:1fr 1fr; gap:32px;}
+    .hero-sub-row{flex-direction:column; align-items:flex-start; gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo" style="text-decoration:none; color:var(--chalk);">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="#new">New arrivals</a></li>
+    <li><a href="#drops">Limited</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button aria-label="Search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button aria-label="Wishlist">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button aria-label="Cart" onclick="window.location.href='cart.html'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    </button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-grid-line"></div>
+
+  <svg class="hero-sneaker" viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path class="fillshape" d="M40 270 C40 250 70 235 130 228 C200 220 260 195 310 165 C360 138 410 128 470 132 C520 135 555 150 565 175 C572 192 565 215 540 228 C480 255 380 270 250 272 C160 273 70 280 40 270 Z"/>
+    <path d="M40 270 C40 250 70 235 130 228 C200 220 260 195 310 165 C360 138 410 128 470 132 C520 135 555 150 565 175 C572 192 565 215 540 228 C480 255 380 270 250 272 C160 273 70 280 40 270 Z"/>
+    <path d="M130 228 C150 205 175 188 210 178 M250 215 C275 195 300 180 330 170"/>
+    <path d="M310 165 C330 185 345 205 350 228"/>
+    <path d="M70 250 C140 258 280 258 420 248 C470 244 510 236 540 224"/>
+    <path d="M460 134 C500 142 535 158 555 178"/>
+  </svg>
+
+  <div class="stride-wrap">
+    <div class="stride-top display">BUILT</div>
+    <div class="seam"></div>
+    <div class="stride-bottom display">DIFFERENT</div>
+  </div>
+
+  <div class="hero-sub-row">
+    <p class="hero-tag">
+      <span class="mono">// EST. KAMMANAHALLI</span>
+      Original silhouettes engineered for the street. No templates, no shortcuts — every pair designed from a blank page.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn primary" href="shop.html" style="text-decoration:none; display:inline-block;">Shop now</a>
+      <button class="btn" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Explore collection</button>
+    </div>
+  </div>
+
+  <div class="scroll-cue">Scroll</div>
+</header>
+
+<section id="shop">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Featured</div>
+      <h2 class="section-title">Collections</h2>
+    </div>
+    <div class="section-count mono">03 categories</div>
+  </div>
+
+  <div class="collections-grid">
+    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+      <div class="placeholder-art">
+        <svg width="260" viewBox="0 0 400 220" aria-hidden="true"><path d="M30 170 C30 150 60 138 110 132 C170 126 220 105 260 80 C300 58 340 50 380 56" fill="none" stroke="#3a3a3d" stroke-width="2"/><ellipse cx="200" cy="170" rx="170" ry="14" fill="#242426"/></svg>
+      </div>
+      <div class="tile-label">
+        <span class="mono">N°01 — RUN</span>
+        <h3>Running</h3>
+      </div>
+    </a>
+    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+      <div class="placeholder-art">
+        <svg width="180" viewBox="0 0 300 180" aria-hidden="true"><rect x="60" y="70" width="180" height="60" rx="20" fill="#242426"/></svg>
+      </div>
+      <div class="tile-label">
+        <span class="mono">N°02 — STREET</span>
+        <h3>Casual</h3>
+      </div>
+    </a>
+    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+      <div class="placeholder-art">
+        <svg width="180" viewBox="0 0 300 180" aria-hidden="true"><path d="M70 110 Q150 60 230 110 L210 140 Q150 100 90 140 Z" fill="#242426"/></svg>
+      </div>
+      <div class="tile-label">
+        <span class="mono">N°03 — SLIDE</span>
+        <h3>Slides</h3>
+      </div>
+    </a>
+    <a class="collection-tile" href="shop.html" style="grid-column:2 / 4; text-decoration:none; color:inherit;">
+      <div class="placeholder-art">
+        <svg width="320" viewBox="0 0 500 160" aria-hidden="true"><path d="M40 120 C40 100 80 90 140 86 C220 80 300 60 360 45 C410 33 450 30 480 40" fill="none" stroke="#3a3a3d" stroke-width="2"/></svg>
+      </div>
+      <div class="tile-label">
+        <span class="mono">N°04 — LIMITED</span>
+        <h3>Drops archive</h3>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section id="new">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Just landed</div>
+      <h2 class="section-title">New arrivals</h2>
+    </div>
+    <div class="section-count mono"><a href="shop.html" style="color:var(--steel-dim); text-decoration:none;">SS26 — 12 styles →</a></div>
+  </div>
+
+  <div class="rail-scroll">
+
+    <div class="product-card" onclick="window.location.href='product.html'" style="cursor:pointer;">
+      <div class="card-art">
+        <span class="badge">New</span>
+        <svg viewBox="0 0 300 180" aria-hidden="true"><path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/></svg>
+      </div>
+      <div class="card-body">
+        <span class="mono">ELV-RN-001</span>
+        <h4>Stride Runner</h4>
+        <div class="card-sizes">
+          <span class="size-pip">UK 7</span><span class="size-pip">UK 8</span><span class="size-pip">UK 9</span><span class="size-pip">UK 10</span>
+        </div>
+        <div class="card-price-row">
+          <span class="card-price">₹6,499</span>
+          <button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:'RN-001',name:'Stride Runner',size:'UK 8',color:'Charcoal',price:6499,shape:0}); ELEVEN.showToast('Stride Runner added');">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" onclick="window.location.href='product.html'" style="cursor:pointer;">
+      <div class="card-art">
+        <svg viewBox="0 0 300 180" aria-hidden="true"><rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/></svg>
+      </div>
+      <div class="card-body">
+        <span class="mono">ELV-CS-014</span>
+        <h4>Off-Court Low</h4>
+        <div class="card-sizes">
+          <span class="size-pip">UK 6</span><span class="size-pip">UK 7</span><span class="size-pip">UK 9</span>
+        </div>
+        <div class="card-price-row">
+          <span class="card-price">₹4,999</span>
+          <button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:'CS-014',name:'Off-Court Low',size:'UK 8',color:'Charcoal',price:4999,shape:1}); ELEVEN.showToast('Off-Court Low added');">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" onclick="window.location.href='product.html'" style="cursor:pointer;">
+      <div class="card-art">
+        <span class="badge" style="background:var(--blue); color:var(--chalk);">-20%</span>
+        <svg viewBox="0 0 300 180" aria-hidden="true"><path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/></svg>
+      </div>
+      <div class="card-body">
+        <span class="mono">ELV-RN-007</span>
+        <h4>Velocity Mid</h4>
+        <div class="card-sizes">
+          <span class="size-pip">UK 8</span><span class="size-pip">UK 9</span><span class="size-pip">UK 10</span><span class="size-pip">UK 11</span>
+        </div>
+        <div class="card-price-row">
+          <span class="card-price">₹5,299</span>
+          <button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:'RN-007',name:'Velocity Mid',size:'UK 8',color:'Charcoal',price:5299,shape:2}); ELEVEN.showToast('Velocity Mid added');">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" onclick="window.location.href='product.html'" style="cursor:pointer;">
+      <div class="card-art">
+        <svg viewBox="0 0 300 180" aria-hidden="true"><path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/></svg>
+      </div>
+      <div class="card-body">
+        <span class="mono">ELV-SL-002</span>
+        <h4>Drift Slide</h4>
+        <div class="card-sizes">
+          <span class="size-pip">UK 7</span><span class="size-pip">UK 8</span><span class="size-pip">UK 9</span>
+        </div>
+        <div class="card-price-row">
+          <span class="card-price">₹2,199</span>
+          <button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:'SL-002',name:'Drift Slide',size:'UK 8',color:'Charcoal',price:2199,shape:3}); ELEVEN.showToast('Drift Slide added');">Add</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="padding:0;">
+  <div class="why-grid">
+    <div class="why-item">
+      <span class="mono">01</span>
+      <h3>Original by design</h3>
+      <p>Every silhouette starts from a blank sketchpad. No reskins, no clones — just ELEVEN's own design language.</p>
+    </div>
+    <div class="why-item">
+      <span class="mono">02</span>
+      <h3>Built for the street</h3>
+      <p>Materials and construction tested for daily wear, not just shelf appeal. Comfort engineered in, not bolted on.</p>
+    </div>
+    <div class="why-item">
+      <span class="mono">03</span>
+      <h3>All-India delivery</h3>
+      <p>Dispatched from Bangalore, delivered nationwide. Track every step from cutting room to your doorstep.</p>
+    </div>
+  </div>
+</section>
+
+<section id="drops" style="padding:0;">
+  <div class="drop-banner">
+    <div class="drop-content">
+      <div class="eyebrow"><span class="dot"></span>Limited drop</div>
+      <h2 class="display">N°11 — THE ARCHIVE PACK</h2>
+      <p style="color:var(--steel-dim); font-size:14px; margin-bottom:8px;">300 pairs. One release. Gone when they're gone.</p>
+      <div class="countdown">
+        <div><div class="num">02</div><div class="lbl">Days</div></div>
+        <div><div class="num">14</div><div class="lbl">Hours</div></div>
+        <div><div class="num">37</div><div class="lbl">Mins</div></div>
+        <div><div class="num">00</div><div class="lbl">Secs</div></div>
+      </div>
+      <button class="btn primary">Notify me</button>
+    </div>
+  </div>
+</section>
+
+<footer id="about">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="display">ELEVEN</div>
+      <p>Built different. An original footwear label out of Bangalore, designing sneakers for the street, not the showroom.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Shop</h5>
+      <a href="shop.html">New arrivals</a>
+      <a href="shop.html">Best sellers</a>
+      <a href="shop.html">Limited edition</a>
+      <a href="shop.html">Men</a>
+      <a href="shop.html">Women</a>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <a href="contact.html">Shipping policy</a>
+      <a href="contact.html">Return policy</a>
+      <a href="contact.html">Order tracking</a>
+      <a href="contact.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@elevenfootwear.in">Email</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ELEVEN Footgear Hub. All rights reserved.</span>
+    <span class="mono">Kammanahalli, Bangalore</span>
+  </div>
+</footer>
+
+<script>
+/* ===== ELEVEN CART — shared localStorage module ===== */
+const ELEVEN = {
+  CART_KEY: 'eleven_cart',
+  WISH_KEY: 'eleven_wish',
+
+  getCart() {
+    try { return JSON.parse(localStorage.getItem(this.CART_KEY)) || []; } catch { return []; }
+  },
+  saveCart(cart) {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    this.updateAllBadges();
+  },
+  addToCart(item) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === item.sku && i.size === item.size);
+    if (idx >= 0) cart[idx].qty += item.qty || 1;
+    else cart.push({ ...item, qty: item.qty || 1 });
+    this.saveCart(cart);
+  },
+  removeFromCart(sku, size) {
+    this.saveCart(this.getCart().filter(i => !(i.sku === sku && i.size === size)));
+  },
+  changeQty(sku, size, delta) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === sku && i.size === size);
+    if (idx >= 0) {
+      cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+      this.saveCart(cart);
+    }
+  },
+  clearCart() { this.saveCart([]); },
+
+  getWishlist() {
+    try { return JSON.parse(localStorage.getItem(this.WISH_KEY)) || []; } catch { return []; }
+  },
+  toggleWish(sku) {
+    const w = this.getWishlist();
+    const idx = w.indexOf(sku);
+    if (idx >= 0) w.splice(idx, 1); else w.push(sku);
+    localStorage.setItem(this.WISH_KEY, JSON.stringify(w));
+    return w.includes(sku);
+  },
+  isWished(sku) { return this.getWishlist().includes(sku); },
+
+  cartCount() { return this.getCart().reduce((s, i) => s + i.qty, 0); },
+  cartSubtotal() { return this.getCart().reduce((s, i) => s + i.price * i.qty, 0); },
+
+  updateAllBadges() {
+    const count = this.cartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  },
+
+  fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); },
+
+  showToast(msg) {
+    let t = document.getElementById('eleven-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'eleven-toast';
+      t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;
+        letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;
+        font-family:'Inter',sans-serif;`;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+};
+
+// Init badges on every page load
+document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
+
+
+// Countdown timer
+(function(){
+  const target = new Date(Date.now() + (2*86400 + 14*3600 + 37*60)*1000);
+  function tick(){
+    const diff = Math.max(0, target - Date.now());
+    const days = Math.floor(diff/86400000);
+    const hrs = Math.floor((diff%86400000)/3600000);
+    const mins = Math.floor((diff%3600000)/60000);
+    const secs = Math.floor((diff%60000)/1000);
+    const nums = document.querySelectorAll('.countdown .num');
+    if(nums.length>=3){nums[0].textContent=String(days).padStart(2,'0'); nums[1].textContent=String(hrs).padStart(2,'0'); nums[2].textContent=String(mins).padStart(2,'0');}
+    // Add seconds if element exists
+    if(nums[3]) nums[3].textContent=String(secs).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

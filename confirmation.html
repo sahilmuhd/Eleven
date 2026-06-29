@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Order confirmed — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C; --chalk:#F7F5F0; --charcoal:#1B1B1D; --charcoal-2:#232325;
+    --steel:#C7CCD1; --steel-dim:#8B9096; --blue:#2F6FED; --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85;}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px;}
+
+  .stepper{display:flex; align-items:center; gap:10px; padding:28px 48px 0; justify-content:center;}
+  .step{display:flex; align-items:center; gap:8px; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:var(--steel-dim);}
+  .step.active{color:var(--chalk);}
+  .step .num{width:22px; height:22px; border-radius:50%; border:1px solid var(--steel-dim); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .step.active .num{background:var(--chalk); color:var(--ink); border-color:var(--chalk);}
+  .step.done .num{background:var(--blue); border-color:var(--blue); color:var(--chalk);}
+  .step-line{width:48px; height:1px; background:var(--line);}
+
+  /* ===== HERO CONFIRM ===== */
+  .confirm-hero{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:64px 24px 48px;
+  }
+  .check-ring{
+    width:84px; height:84px; border-radius:50%; border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; margin-bottom:28px;
+    position:relative;
+  }
+  .check-ring svg{width:34px; height:34px; color:var(--gold);}
+  .check-ring::before{
+    content:''; position:absolute; inset:-8px; border-radius:50%; border:1px solid var(--line);
+    animation:ripple 2s ease-out infinite;
+  }
+  @keyframes ripple{ 0%{ transform:scale(0.85); opacity:1; } 100%{ transform:scale(1.25); opacity:0; } }
+  .confirm-hero .eyebrow{font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:500;}
+  .confirm-hero h1{font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,5vw,52px); line-height:1.05; margin-bottom:14px;}
+  .confirm-hero p{color:var(--steel-dim); font-size:14px; max-width:440px; line-height:1.6;}
+  .order-id-row{
+    display:flex; gap:24px; margin-top:28px; padding:18px 28px;
+    border:1px solid var(--line); background:var(--charcoal);
+  }
+  .order-id-item{text-align:center;}
+  .order-id-item .lbl{font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim); margin-bottom:6px;}
+  .order-id-item .val{font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:500;}
+
+  /* ===== TRACKING TIMELINE ===== */
+  .timeline-section{padding:0 48px 64px; max-width:760px; margin:0 auto;}
+  .timeline-section h3{font-family:'Bebas Neue',sans-serif; font-size:22px; margin-bottom:32px; text-align:center;}
+  .timeline{display:flex; justify-content:space-between; position:relative;}
+  .timeline::before{
+    content:''; position:absolute; top:13px; left:5%; right:5%; height:1px; background:var(--line); z-index:0;
+  }
+  .timeline-step{position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; flex:1;}
+  .timeline-dot{
+    width:26px; height:26px; border-radius:50%; background:var(--ink); border:1.5px solid var(--steel-dim);
+    display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+  }
+  .timeline-step.done .timeline-dot{background:var(--blue); border-color:var(--blue);}
+  .timeline-step.done .timeline-dot svg{width:12px; height:12px; color:var(--chalk);}
+  .timeline-step .lbl{font-size:11px; text-align:center; color:var(--steel-dim); letter-spacing:0.02em;}
+  .timeline-step.done .lbl{color:var(--chalk);}
+  .timeline-step .date{font-size:10px; color:var(--steel-dim); margin-top:3px; font-family:'JetBrains Mono',monospace;}
+
+  /* ===== ORDER DETAILS ===== */
+  .details-layout{
+    display:grid; grid-template-columns:1fr 340px; gap:40px;
+    padding:0 48px 80px; max-width:1040px; margin:0 auto;
+  }
+  .order-items-card{background:var(--charcoal); border:1px solid var(--line);}
+  .order-items-card h4{font-size:14px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; padding:20px 24px; border-bottom:1px solid var(--line);}
+  .order-item{display:flex; gap:16px; padding:18px 24px; border-bottom:1px solid var(--line); align-items:center;}
+  .order-item:last-child{border-bottom:none;}
+  .item-art{width:64px; height:64px; background:linear-gradient(135deg, var(--charcoal-2), #161617); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .item-art svg{width:75%;}
+  .item-info{flex:1;}
+  .item-info .mono{font-size:11px; color:var(--steel-dim);}
+  .item-info h5{font-size:14px; font-weight:600; margin:3px 0 3px;}
+  .item-info span{font-size:12px; color:var(--steel-dim);}
+  .item-price{font-family:'JetBrains Mono',monospace; font-size:14px;}
+
+  .totals-row{display:flex; justify-content:space-between; padding:10px 24px; font-size:13px; color:var(--steel-dim);}
+  .totals-row.total{color:var(--chalk); font-weight:600; font-size:15px; border-top:1px solid var(--line); padding-top:16px; margin-top:6px;}
+
+  .side-card{background:var(--charcoal); border:1px solid var(--line); padding:22px; margin-bottom:18px;}
+  .side-card h5{font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--steel-dim); margin-bottom:12px;}
+  .side-card p{font-size:13px; line-height:1.6;}
+  .side-card .addr-name{font-weight:600; margin-bottom:4px;}
+
+  .actions-col{display:flex; flex-direction:column; gap:10px;}
+  .btn{
+    font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    padding:14px; text-align:center; cursor:pointer; transition:all .25s; text-decoration:none; display:block;
+  }
+  .btn.primary{background:var(--chalk); color:var(--ink); border:none;}
+  .btn.primary:hover{background:var(--blue); color:var(--chalk);}
+  .btn.outline{background:transparent; color:var(--chalk); border:1px solid var(--chalk);}
+  .btn.outline:hover{background:var(--chalk); color:var(--ink);}
+
+  .help-row{display:flex; justify-content:center; gap:32px; padding:0 48px 80px; flex-wrap:wrap;}
+  .help-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--steel-dim);}
+  .help-item svg{color:var(--gold);}
+  .help-item a{color:var(--chalk); text-decoration:underline;}
+
+  footer{padding:40px 48px; border-top:1px solid var(--line); text-align:center; font-size:12px; color:var(--steel-dim);}
+
+  @media (max-width:900px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .stepper{padding-left:20px; padding-right:20px;}
+    .confirm-hero{padding:48px 20px 36px;}
+    .order-id-row{flex-direction:column; gap:14px; width:100%;}
+    .timeline-section{padding:0 20px 48px;}
+    .timeline .lbl{font-size:9px;}
+    .details-layout{grid-template-columns:1fr; padding:0 20px 60px;}
+    .help-row{padding:0 20px 60px; gap:18px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="index.html#new">New arrivals</a></li>
+    <li><a href="index.html#drops">Limited</a></li>
+    <li><a href="index.html#about">About</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button aria-label="Account" onclick="window.location.href='index.html'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+  </div>
+</nav>
+
+<div class="stepper">
+  <div class="step done"><span class="num">✓</span> Cart</div>
+  <div class="step-line"></div>
+  <div class="step done"><span class="num">✓</span> Checkout</div>
+  <div class="step-line"></div>
+  <div class="step active"><span class="num">✓</span> Confirmation</div>
+</div>
+
+<div class="confirm-hero">
+  <div class="check-ring">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <span class="eyebrow">Order placed</span>
+  <h1 class="display">Thanks — it's on the way.</h1>
+  <p>A confirmation has been sent to your email and WhatsApp. We'll notify you again the moment your pair ships from Bangalore.</p>
+
+  <div class="order-id-row">
+    <div class="order-id-item"><div class="lbl">Order number</div><div class="val">ELV-2026-08841</div></div>
+    <div class="order-id-item"><div class="lbl">Placed on</div><div class="val">29 Jun 2026</div></div>
+    <div class="order-id-item"><div class="lbl">Estimated delivery</div><div class="val">2–5 Jul 2026</div></div>
+  </div>
+</div>
+
+<div class="timeline-section">
+  <h3 class="display">Order status</h3>
+  <div class="timeline">
+    <div class="timeline-step done">
+      <div class="timeline-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <span class="lbl">Order placed</span>
+      <span class="date">29 Jun</span>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <span class="lbl">Processing</span>
+      <span class="date">Est. 30 Jun</span>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <span class="lbl">Shipped</span>
+      <span class="date">Est. 1 Jul</span>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <span class="lbl">Out for delivery</span>
+      <span class="date">Est. 4 Jul</span>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <span class="lbl">Delivered</span>
+      <span class="date">Est. 5 Jul</span>
+    </div>
+  </div>
+</div>
+
+<div class="details-layout">
+
+  <div class="order-items-card">
+    <h4>Items in this order</h4>
+    <div id="orderItems"></div>
+    <div style="padding:18px 24px;">
+      <div class="totals-row"><span>Subtotal</span><span class="mono">₹13,997</span></div>
+      <div class="totals-row"><span>Discount (BUILT10)</span><span class="mono" style="color:var(--gold);">−₹1,400</span></div>
+      <div class="totals-row"><span>Shipping</span><span class="mono">Free</span></div>
+      <div class="totals-row total"><span>Total paid</span><span class="mono">₹12,597</span></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="side-card">
+      <h5>Shipping address</h5>
+      <p class="addr-name">Your name</p>
+      <p>142, 4th Cross, Kammanahalli,<br>Bangalore, Karnataka 560084</p>
+    </div>
+    <div class="side-card">
+      <h5>Payment method</h5>
+      <p>UPI — paid in full</p>
+    </div>
+    <div class="actions-col">
+      <a href="contact.html" class="btn primary">Track order</a>
+      <a href="shop.html" class="btn outline">Continue shopping</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="help-row">
+  <div class="help-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    Questions about your order? <a href="https://wa.me/919876543210" target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </div>
+  <div class="help-item">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"/></svg>
+    <a href="contact.html">Return or exchange policy</a>
+  </div>
+</div>
+
+<footer>© 2026 ELEVEN Footgear Hub. All rights reserved. · Kammanahalli, Bangalore</footer>
+
+<script>
+/* ===== ELEVEN CART — shared localStorage module ===== */
+const ELEVEN = {
+  CART_KEY: 'eleven_cart',
+  WISH_KEY: 'eleven_wish',
+
+  getCart() {
+    try { return JSON.parse(localStorage.getItem(this.CART_KEY)) || []; } catch { return []; }
+  },
+  saveCart(cart) {
+    localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
+    this.updateAllBadges();
+  },
+  addToCart(item) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === item.sku && i.size === item.size);
+    if (idx >= 0) cart[idx].qty += item.qty || 1;
+    else cart.push({ ...item, qty: item.qty || 1 });
+    this.saveCart(cart);
+  },
+  removeFromCart(sku, size) {
+    this.saveCart(this.getCart().filter(i => !(i.sku === sku && i.size === size)));
+  },
+  changeQty(sku, size, delta) {
+    const cart = this.getCart();
+    const idx = cart.findIndex(i => i.sku === sku && i.size === size);
+    if (idx >= 0) {
+      cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+      this.saveCart(cart);
+    }
+  },
+  clearCart() { this.saveCart([]); },
+
+  getWishlist() {
+    try { return JSON.parse(localStorage.getItem(this.WISH_KEY)) || []; } catch { return []; }
+  },
+  toggleWish(sku) {
+    const w = this.getWishlist();
+    const idx = w.indexOf(sku);
+    if (idx >= 0) w.splice(idx, 1); else w.push(sku);
+    localStorage.setItem(this.WISH_KEY, JSON.stringify(w));
+    return w.includes(sku);
+  },
+  isWished(sku) { return this.getWishlist().includes(sku); },
+
+  cartCount() { return this.getCart().reduce((s, i) => s + i.qty, 0); },
+  cartSubtotal() { return this.getCart().reduce((s, i) => s + i.price * i.qty, 0); },
+
+  updateAllBadges() {
+    const count = this.cartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  },
+
+  fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); },
+
+  showToast(msg) {
+    let t = document.getElementById('eleven-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'eleven-toast';
+      t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;
+        letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;
+        font-family:'Inter',sans-serif;`;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+};
+
+// Init badges on every page load
+document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
+
+</script>
+<script>
+  // Populate confirmation from saved order data
+  const orderId = localStorage.getItem('eleven_order_id') || 'ELV-2026-' + Math.floor(10000+Math.random()*90000);
+  const email = localStorage.getItem('eleven_order_email') || '';
+  const total = localStorage.getItem('eleven_order_total') || '';
+  document.querySelectorAll('.mono').forEach(el => {
+    if(el.textContent.includes('ELV-2026')) el.textContent = orderId;
+  });
+  if(email) document.querySelectorAll('p').forEach(el => {
+    if(el.textContent.includes('name@email.com') || el.textContent.includes('@email')) el.innerHTML = el.innerHTML.replace(/[\w.+-]+@[\w.]+/g, email);
+  });
+</script>
+
+</body>
+</html>
