@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Arrivals — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C; --chalk:#F7F5F0; --charcoal:#1B1B1D; --charcoal-2:#232325;
+    --steel:#C7CCD1; --steel-dim:#8B9096; --blue:#2F6FED; --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif; overflow-x:hidden;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85; transition:opacity .25s, color .25s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-links a.active{opacity:1; color:var(--blue);}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px; position:relative;}
+
+  /* PAGE HERO */
+  .page-hero{
+    padding:80px 48px 56px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .page-hero::before{
+    content:'';
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse 50% 80% at 80% 50%, rgba(47,111,237,0.07), transparent 70%);
+    pointer-events:none;
+  }
+  .page-hero .eyebrow{font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500;}
+  .page-hero h1{font-family:'Bebas Neue',sans-serif; font-size:clamp(56px,10vw,120px); line-height:0.9; letter-spacing:0.01em;}
+  .page-hero .sub{color:var(--steel-dim); font-size:15px; margin-top:20px; max-width:520px; line-height:1.7;}
+  .page-hero .season-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gold); border:1px solid rgba(201,163,104,0.35); padding:6px 14px; margin-bottom:18px;
+  }
+  .season-tag .dot{width:5px; height:5px; border-radius:50%; background:var(--gold); animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+
+  /* FEATURED DROP BANNER */
+  .drop-strip{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:28px 48px;
+    background:var(--charcoal);
+    border-bottom:1px solid var(--line);
+    gap:24px;
+  }
+  .drop-strip-left{display:flex; align-items:center; gap:20px;}
+  .drop-strip .badge{
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:6px 12px; background:var(--gold); color:var(--ink); font-weight:600; white-space:nowrap;
+  }
+  .drop-strip h3{font-family:'Bebas Neue',sans-serif; font-size:22px;}
+  .drop-strip p{font-size:13px; color:var(--steel-dim);}
+  .btn{
+    font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-weight:600;
+    padding:12px 24px; border-radius:2px; cursor:pointer;
+    border:1px solid var(--chalk); background:transparent; color:var(--chalk);
+    transition:all .3s ease; font-family:'Inter',sans-serif; white-space:nowrap; text-decoration:none; display:inline-block;
+  }
+  .btn.primary{background:var(--chalk); color:var(--ink);}
+  .btn.primary:hover{background:var(--blue); border-color:var(--blue); color:var(--chalk);}
+  .btn:not(.primary):hover{background:var(--chalk); color:var(--ink);}
+
+  /* COUNTDOWN */
+  .countdown-strip{display:flex; gap:20px; align-items:center;}
+  .countdown-strip .cd-item{text-align:center;}
+  .countdown-strip .num{font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:500; line-height:1;}
+  .countdown-strip .lbl{font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--steel-dim); margin-top:2px;}
+  .cd-sep{color:var(--steel-dim); font-size:18px; font-family:'JetBrains Mono',monospace; margin-top:-8px;}
+
+  /* ARRIVALS GRID */
+  .arrivals-section{padding:64px 48px 100px;}
+  .section-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:20px;}
+  .section-head h2{font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,4vw,44px); line-height:1;}
+  .section-head .mono{font-size:13px; color:var(--steel-dim);}
+  .eyebrow-small{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; font-weight:500;}
+
+  /* Product grid */
+  .product-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:2px;}
+  .product-card{
+    background:var(--charcoal);
+    border:1px solid var(--line);
+    transition:border-color .3s;
+    cursor:pointer;
+  }
+  .product-card:hover{border-color:var(--steel-dim);}
+  .card-art{
+    height:280px;
+    background:linear-gradient(135deg, #232325, #161617);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .card-art svg{width:70%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art svg{transform:translateY(-6px) scale(1.04);}
+  .badge-pill{
+    position:absolute; top:14px; left:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:5px 10px; font-weight:500;
+  }
+  .badge-new{background:var(--gold); color:var(--ink);}
+  .badge-sale{background:var(--blue); color:var(--chalk);}
+  .badge-limited{background:var(--chalk); color:var(--ink);}
+  .card-body{padding:18px 18px 20px;}
+  .card-body .mono{font-size:11px; color:var(--steel-dim); letter-spacing:0.04em;}
+  .card-body h4{font-size:16px; font-weight:600; margin:6px 0 8px;}
+  .card-sizes{display:flex; gap:5px; margin-top:8px; flex-wrap:wrap;}
+  .size-pip{font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--steel-dim); border:1px solid var(--line); padding:3px 6px;}
+  .card-price-row{display:flex; justify-content:space-between; align-items:center; margin-top:14px;}
+  .card-price{font-family:'JetBrains Mono',monospace; font-size:15px;}
+  .card-price .was{font-size:12px; color:var(--steel-dim); text-decoration:line-through; margin-right:6px;}
+
+  /* NOTIFY BAND */
+  .notify-band{
+    background:var(--charcoal);
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:64px 48px;
+    text-align:center;
+  }
+  .notify-band h2{font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,5vw,52px); margin-bottom:12px;}
+  .notify-band p{font-size:14px; color:var(--steel-dim); margin-bottom:28px;}
+  .notify-form{display:flex; gap:0; max-width:440px; margin:0 auto;}
+  .notify-form input{
+    flex:1; background:var(--ink); border:1px solid var(--line); border-right:none;
+    color:var(--chalk); padding:14px 18px; font-size:14px; font-family:'Inter',sans-serif;
+  }
+  .notify-form input:focus{outline:none; border-color:var(--blue);}
+  .notify-form input::placeholder{color:var(--steel-dim);}
+  .notify-form button{
+    background:var(--chalk); color:var(--ink); border:1px solid var(--chalk);
+    padding:14px 22px; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; white-space:nowrap;
+    transition:all .3s;
+  }
+  .notify-form button:hover{background:var(--blue); border-color:var(--blue); color:var(--chalk);}
+  .wa-notify{
+    display:inline-flex; align-items:center; gap:10px; margin-top:16px;
+    color:var(--steel-dim); font-size:13px; cursor:pointer;
+    text-decoration:none; transition:color .25s;
+  }
+  .wa-notify:hover{color:var(--chalk);}
+  .wa-notify svg{color:#25D366;}
+
+  /* FOOTER */
+  footer{padding:80px 48px 32px; border-top:1px solid var(--line);}
+  .footer-top{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:48px; margin-bottom:64px;}
+  .footer-brand .display{font-size:28px; margin-bottom:14px;}
+  .footer-brand p{font-size:13px; color:var(--steel-dim); max-width:260px; line-height:1.6;}
+  .footer-col h5{font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim); margin-bottom:16px;}
+  .footer-col a{display:block; color:var(--chalk); text-decoration:none; font-size:14px; margin-bottom:10px; opacity:0.85;}
+  .footer-col a:hover{opacity:1; color:var(--blue);}
+  .footer-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:24px; border-top:1px solid var(--line); font-size:12px; color:var(--steel-dim);}
+
+  @media(max-width:900px){
+    nav{padding:16px 22px;}
+    .nav-links{display:none;}
+    .page-hero{padding:56px 22px 40px;}
+    .drop-strip{flex-direction:column; padding:22px; align-items:flex-start;}
+    .arrivals-section{padding:40px 22px 60px;}
+    .product-grid{grid-template-columns:1fr 1fr; gap:2px;}
+    .notify-band{padding:48px 22px;}
+    .notify-form{flex-direction:column;}
+    .notify-form input{border-right:1px solid var(--line); border-bottom:none;}
+    .footer-top{grid-template-columns:1fr 1fr; gap:32px;}
+  }
+  @media(max-width:500px){
+    .product-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="new-arrivals.html" class="active">New Arrivals</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button aria-label="Wishlist"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <button aria-label="Cart" onclick="window.location.href='cart.html'" style="position:relative;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count" style="display:none; position:absolute; top:-4px; right:-4px; background:var(--blue); color:var(--chalk); font-size:9px; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; font-family:Inter,sans-serif; font-weight:700;"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="season-tag"><span class="dot"></span>SS26 season</div>
+  <div class="eyebrow">Just dropped</div>
+  <h1 class="display">New<br>Arrivals</h1>
+  <p class="sub">The latest silhouettes out of Kammanahalli. Designed from scratch, built for the street. Updated every season — no reruns.</p>
+</div>
+
+<!-- LIMITED DROP STRIP -->
+<div class="drop-strip">
+  <div class="drop-strip-left">
+    <span class="badge">Limited drop</span>
+    <div>
+      <h3 class="display">N°11 — THE ARCHIVE PACK</h3>
+      <p>300 pairs. One release. Gone when they're gone.</p>
+    </div>
+  </div>
+  <div class="countdown-strip">
+    <div class="cd-item"><div class="num" id="cd-d">02</div><div class="lbl">Days</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-item"><div class="num" id="cd-h">14</div><div class="lbl">Hrs</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-item"><div class="num" id="cd-m">37</div><div class="lbl">Min</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-item"><div class="num" id="cd-s">00</div><div class="lbl">Sec</div></div>
+  </div>
+  <a href="shop.html" class="btn primary">Shop the drop</a>
+</div>
+
+<!-- NEW ARRIVALS GRID -->
+<div class="arrivals-section">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow-small">SS26 collection</div>
+      <h2 class="display">Fresh this season</h2>
+    </div>
+    <span class="mono">5 new styles</span>
+  </div>
+
+  <div class="product-grid" id="newGrid"></div>
+
+  <div style="margin-top:48px; border-top:1px solid var(--line); padding-top:48px;">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow-small">On sale now</div>
+        <h2 class="display">Marked down</h2>
+      </div>
+      <span class="mono">2 styles</span>
+    </div>
+    <div class="product-grid" id="saleGrid"></div>
+  </div>
+</div>
+
+<!-- NOTIFY BAND -->
+<div class="notify-band">
+  <div class="eyebrow" style="font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500;">Be first in line</div>
+  <h2 class="display">Drop alerts</h2>
+  <p>Get notified the moment a new style lands. No spam — just sneakers.</p>
+  <div class="notify-form">
+    <input type="email" placeholder="your@email.com" id="notifyEmail">
+    <button onclick="submitNotify()">Notify me</button>
+  </div>
+  <a class="wa-notify" href="https://wa.me/919876543210?text=Hey%20ELEVEN%20%E2%80%94%20add%20me%20to%20drop%20alerts%20please!" target="_blank" rel="noopener">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    Or get alerts on WhatsApp
+  </a>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="display">ELEVEN</div>
+      <p>Built different. An original footwear label out of Bangalore, designing sneakers for the street, not the showroom.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Shop</h5>
+      <a href="new-arrivals.html">New arrivals</a>
+      <a href="shop.html">Best sellers</a>
+      <a href="shop.html">Limited edition</a>
+      <a href="shop.html">Men</a>
+      <a href="shop.html">Women</a>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <a href="contact.html">Shipping policy</a>
+      <a href="contact.html">Return policy</a>
+      <a href="contact.html">Order tracking</a>
+      <a href="contact.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@elevenfootwear.in">Email</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ELEVEN Footgear Hub. All rights reserved.</span>
+    <span class="mono">Kammanahalli, Bangalore</span>
+  </div>
+</footer>
+
+<script>
+/* ===== ELEVEN CART ===== */
+const ELEVEN = {
+  CART_KEY:'eleven_cart', WISH_KEY:'eleven_wish',
+  getCart(){try{return JSON.parse(localStorage.getItem(this.CART_KEY))||[];}catch{return [];}},
+  saveCart(cart){localStorage.setItem(this.CART_KEY,JSON.stringify(cart));this.updateAllBadges();},
+  addToCart(item){const cart=this.getCart();const idx=cart.findIndex(i=>i.sku===item.sku&&i.size===item.size);if(idx>=0)cart[idx].qty+=item.qty||1;else cart.push({...item,qty:item.qty||1});this.saveCart(cart);},
+  cartCount(){return this.getCart().reduce((s,i)=>s+i.qty,0);},
+  updateAllBadges(){const count=this.cartCount();document.querySelectorAll('.cart-count').forEach(el=>{el.textContent=count;el.style.display=count>0?'flex':'none';});},
+  fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN');},
+  showToast(msg){let t=document.getElementById('eleven-toast');if(!t){t=document.createElement('div');t.id='eleven-toast';t.style.cssText=`position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--chalk);color:var(--ink);padding:12px 22px;font-size:13px;font-weight:600;letter-spacing:0.03em;z-index:9999;opacity:0;transition:all .3s ease;white-space:nowrap;font-family:'Inter',sans-serif;`;document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(t._timer);t._timer=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2200);}
+};
+document.addEventListener('DOMContentLoaded',()=>ELEVEN.updateAllBadges());
+
+const shoeShapes = [
+  '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+  '<rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/>',
+  '<path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/>',
+  '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
+];
+
+const newProducts = [
+  {name:'Stride Runner', sku:'RN-001', price:6499, shape:0, sizes:[7,8,9,10], badge:'new'},
+  {name:'Apex Trainer',  sku:'RN-012', price:7299, shape:0, sizes:[8,9,10],   badge:'new'},
+  {name:'Glide Pro',     sku:'RN-018', price:6899, shape:2, sizes:[7,8,9,10], badge:'new'},
+  {name:'Stratus Trainer',sku:'RN-023',price:7499, shape:2, sizes:[8,9,10,11],badge:'limited'},
+  {name:'Sector One',    sku:'CS-009', price:4599, shape:1, sizes:[6,7,8],    badge:'new'},
+];
+
+const saleProducts = [
+  {name:'Off-Court Low', sku:'CS-014', price:4999, was:5999, shape:1, sizes:[6,7,9],    badge:'sale'},
+  {name:'Velocity Mid',  sku:'RN-007', price:5299, was:6599, shape:2, sizes:[8,9,10,11],badge:'sale'},
+];
+
+function renderCard(p, container) {
+  const badgeMap = {new:'badge-new', sale:'badge-sale', limited:'badge-limited'};
+  const badgeLabel = {new:'New', sale:'-20%', limited:'Limited'};
+  const wasHtml = p.was ? `<span class="was">${ELEVEN.fmt(p.was)}</span>` : '';
+  const div = document.createElement('div');
+  div.className = 'product-card';
+  div.onclick = () => window.location.href = 'product.html';
+  div.innerHTML = `
+    <div class="card-art">
+      <span class="badge-pill ${badgeMap[p.badge]}">${badgeLabel[p.badge]}</span>
+      <svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>
+    </div>
+    <div class="card-body">
+      <span class="mono">ELV-${p.sku}</span>
+      <h4>${p.name}</h4>
+      <div class="card-sizes">${p.sizes.map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
+      <div class="card-price-row">
+        <span class="card-price">${wasHtml}${ELEVEN.fmt(p.price)}</span>
+        <button class="btn" style="padding:8px 16px;font-size:11px;" onclick="event.stopPropagation();ELEVEN.addToCart({sku:'${p.sku}',name:'${p.name}',size:'UK ${p.sizes[0]}',color:'Charcoal',price:${p.price},shape:${p.shape}});ELEVEN.showToast('${p.name} added');">Add</button>
+      </div>
+    </div>`;
+  container.appendChild(div);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const newGrid = document.getElementById('newGrid');
+  const saleGrid = document.getElementById('saleGrid');
+  newProducts.forEach(p => renderCard(p, newGrid));
+  saleProducts.forEach(p => renderCard(p, saleGrid));
+});
+
+// Countdown
+(function(){
+  const target = new Date(Date.now() + (2*86400 + 14*3600 + 37*60)*1000);
+  function tick(){
+    const diff = Math.max(0, target - Date.now());
+    const d = Math.floor(diff/86400000);
+    const h = Math.floor((diff%86400000)/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+function submitNotify() {
+  const inp = document.getElementById('notifyEmail');
+  if (!inp.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value.trim())) {
+    inp.style.borderColor = '#e05252';
+    return;
+  }
+  inp.style.borderColor = '';
+  ELEVEN.showToast("You're on the list — we'll drop you a note.");
+  inp.value = '';
+}
+</script>
+</body>
+</html>

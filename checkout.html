@@ -139,8 +139,15 @@
 
 <nav>
   <a href="index.html" class="nav-logo">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="new-arrivals.html">New Arrivals</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
   <div class="nav-icons">
-    <a href="cart.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back to cart</a>
+    <a href="cart.html" style="color:var(--steel-dim); text-decoration:none; font-size:13px; display:flex; align-items:center; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back to cart</a>
   </div>
 </nav>
 
@@ -247,10 +254,10 @@
     <div class="summary-row"><span>Shipping</span><span class="mono" id="shipCostVal">Free</span></div>
     <div class="summary-row total"><span>Total</span><span class="mono" id="checkoutTotal">₹12,597</span></div>
 
-    <button class="btn-place-order" onclick="placeOrder()">Place order</button>
+    <button class="btn-place-order" onclick="placeOrder()">Order via WhatsApp</button>
     <div class="secure-note">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg>
-      Secured and encrypted checkout
+      Order confirmed via WhatsApp · ELEVEN Footwear
     </div>
   </div>
 
@@ -460,12 +467,53 @@ document.addEventListener('DOMContentLoaded', () => ELEVEN.updateAllBadges());
       if(firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
       return;
     }
-    // Save order details for confirmation page
+
+    // Build WhatsApp order message
+    const cart = ELEVEN.getCart();
+    const orderId = 'ELV-2026-' + Math.floor(10000 + Math.random()*90000);
+    const total = document.getElementById('checkoutTotal')?.textContent || ELEVEN.fmt(ELEVEN.cartSubtotal());
+    const name = document.querySelector('.form-grid input[placeholder="Your name"]')?.value || '';
+    const address = document.querySelector('input[placeholder="House no, street, area"]')?.value || '';
+    const pincode = document.querySelector('input[placeholder="560084"]')?.value || '';
+    const paySelected = document.querySelector('.pay-card.selected .pay-card-left')?.textContent?.trim() || 'UPI';
+
+    let itemLines = cart.map(i => `  • ${i.name} (${i.size}) x${i.qty} — ${ELEVEN.fmt(i.price * i.qty)}`).join('
+');
+    if(!itemLines) itemLines = '  (no items in cart)';
+
+    const msg = [
+      '🛒 *New Order — ELEVEN Footwear*',
+      '─────────────────────',
+      `Order ID: ${orderId}`,
+      '',
+      '*Items:*',
+      itemLines,
+      '',
+      `*Total: ${total}*`,
+      `Payment: ${paySelected}`,
+      '',
+      '*Delivery details:*',
+      `Name: ${name || email.value.trim()}`,
+      `Phone: ${phone.value.trim()}`,
+      `Email: ${email.value.trim()}`,
+      address ? `Address: ${address}, ${pincode}` : '',
+      '─────────────────────',
+      'Please confirm my order. Thank you!'
+    ].filter(Boolean).join('
+');
+
+    // Save for confirmation page
     localStorage.setItem('eleven_order_email', email.value.trim());
-    localStorage.setItem('eleven_order_total', document.getElementById('checkoutTotal')?.textContent || '');
-    localStorage.setItem('eleven_order_id', 'ELV-2026-' + Math.floor(10000 + Math.random()*90000));
-    // Clear cart after order
+    localStorage.setItem('eleven_order_total', total);
+    localStorage.setItem('eleven_order_id', orderId);
     ELEVEN.clearCart();
+
+    // Open WhatsApp with order details
+    const waNumber = '919876543210'; // Replace with actual number
+    const waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg);
+    window.open(waUrl, '_blank');
+
+    // Redirect to confirmation page
     window.location.href = 'confirmation.html';
   }
 </script>
