@@ -39,14 +39,24 @@
   .hamburger.open span:nth-child(2){opacity:0; transform:scaleX(0);}
   .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
   .mobile-menu{
-    display:none; position:fixed; top:65px; left:0; right:0; bottom:0; z-index:150;
-    background:var(--ink); padding:24px 24px 40px; flex-direction:column; gap:0;
-    overflow-y:auto;
+    display:none;
+    position:fixed; inset:0; z-index:150;
+    background:var(--ink);
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:0;
+    padding:80px 40px 40px;
   }
   .mobile-menu.open{display:flex;}
   .mobile-menu a{
-    color:var(--chalk); text-decoration:none; font-size:22px; font-family:'Bebas Neue',sans-serif;
-    padding:18px 4px; border-bottom:1px solid var(--line); transition:color .2s;
+    display:block; width:100%;
+    color:var(--chalk); text-decoration:none;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,10vw,56px);
+    letter-spacing:0.04em; text-align:center;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    transition:color .2s;
   }
   .mobile-menu a:first-child{border-top:1px solid var(--line);}
   .mobile-menu a:hover, .mobile-menu a.active{color:var(--gold);}
@@ -151,7 +161,9 @@
     <span></span><span></span><span></span>
   </button>
 
-  <div class="mobile-menu" id="mobileMenu">
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
     <a href="index.html" class="">Home</a>
     <a href="about.html" class="">About</a>
     <a href="new-arrivals.html" class="">New Arrivals</a>
@@ -167,7 +179,6 @@
       <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
     </div>
   </div>
-</nav>
 
 <div class="page-head">
   <div class="breadcrumb"><a href="index.html">Home</a> / <span>Wishlist</span></div>

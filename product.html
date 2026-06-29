@@ -199,7 +199,7 @@
   }
 
   /* ===== MOBILE HAMBURGER ===== */
-  .hamburger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; z-index:200;}
+  .hamburger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; z-index:300;}
   .hamburger span{display:block; width:22px; height:2px; background:var(--chalk); transition:all .3s ease; border-radius:1px;}
   .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
   .hamburger.open span:nth-child(2){opacity:0; transform:scaleX(0);}
@@ -266,6 +266,8 @@
   <span></span><span></span><span></span>
 </button>
 
+</nav>
+
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" class="">Home</a>
     <a href="about.html" class="">About</a>
@@ -282,8 +284,6 @@
     <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
   </div>
 </div>
-
-</nav>
 
 <div class="breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="shop.html">Running</a> / <span>Stride Runner</span></div>
 

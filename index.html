@@ -36,6 +36,10 @@
     padding:24px 48px;
     mix-blend-mode:difference;
   }
+  /* Disable blend mode on mobile — it inverts the hamburger and menu overlay */
+  @media(max-width:900px){
+    nav{ mix-blend-mode:normal; }
+  }
   .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em;}
   .nav-links{display:flex; gap:36px; list-style:none;}
   .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85; transition:opacity .25s;}
@@ -356,14 +360,16 @@
   <span></span><span></span><span></span>
 </button>
 
+</nav>
+
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" class="active">Home</a>
-    <a href="about.html" class="">About</a>
-    <a href="new-arrivals.html" class="">New Arrivals</a>
-    <a href="shop.html" class="">Shop</a>
-    <a href="contact.html" class="">Contact</a>
+  <a href="about.html" class="">About</a>
+  <a href="new-arrivals.html" class="">New Arrivals</a>
+  <a href="shop.html" class="">Shop</a>
+  <a href="contact.html" class="">Contact</a>
   <a href="search.html">Search</a>
-    <a href="wishlist.html">Wishlist</a>
+  <a href="wishlist.html">Wishlist</a>
   <div class="mobile-menu-footer">
     <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
     <span>·</span>
@@ -372,8 +378,6 @@
     <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
   </div>
 </div>
-
-</nav>
 
 <header class="hero">
   <div class="hero-grid-line"></div>
