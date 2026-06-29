@@ -133,20 +133,56 @@
     .form-grid{grid-template-columns:1fr;}
     .form-field.full{grid-column:1;}
   }
+
+  /* ===== MOBILE HAMBURGER ===== */
+  .hamburger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; z-index:200;}
+  .hamburger span{display:block; width:22px; height:2px; background:var(--chalk); transition:all .3s ease; border-radius:1px;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0; transform:scaleX(0);}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-menu{
+    display:none;
+    position:fixed; inset:0; z-index:150;
+    background:var(--ink);
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:0;
+    padding:80px 40px 40px;
+  }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{
+    display:block; width:100%;
+    color:var(--chalk); text-decoration:none;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,10vw,56px);
+    letter-spacing:0.04em; text-align:center;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    transition:color .2s;
+  }
+  .mobile-menu a:first-child{border-top:1px solid var(--line);}
+  .mobile-menu a:hover, .mobile-menu a.active{color:var(--gold);}
+  .mobile-menu-footer{
+    margin-top:32px; display:flex; gap:24px; align-items:center;
+    font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim);
+  }
+  .mobile-menu-footer a{color:var(--steel-dim); text-decoration:none;}
+  .mobile-menu-footer a:hover{color:var(--chalk);}
+
+  @media(max-width:900px){
+    .hamburger{display:flex;}
+    .nav-links{display:none !important;}
+    .nav-desktop-icons{display:none;}
+  }
+
 </style>
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="nav-logo">ELEVEN</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="new-arrivals.html">New Arrivals</a></li>
-    <li><a href="shop.html">Shop</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-  <div class="nav-icons">
+  <div style="display:flex; align-items:center; gap:16px;">
     <a href="cart.html" style="color:var(--steel-dim); text-decoration:none; font-size:13px; display:flex; align-items:center; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back to cart</a>
   </div>
 </nav>
