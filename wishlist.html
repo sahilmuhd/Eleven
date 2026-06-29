@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wishlist — ELEVEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C; --chalk:#F7F5F0; --charcoal:#1B1B1D; --charcoal-2:#232325;
+    --steel:#C7CCD1; --steel-dim:#8B9096; --blue:#2F6FED; --gold:#C9A368;
+    --line: rgba(247,245,240,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink); color:var(--chalk); font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.01em;}
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(11,11,12,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.08em; text-decoration:none; color:var(--chalk);}
+  .nav-links{display:flex; gap:36px; list-style:none;}
+  .nav-links a{color:var(--chalk); text-decoration:none; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; opacity:0.85;}
+  .nav-links a:hover, .nav-links a.active{opacity:1; color:var(--blue);}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons button{background:none; border:none; color:var(--chalk); cursor:pointer; padding:4px; position:relative;}
+
+  .hamburger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; z-index:200;}
+  .hamburger span{display:block; width:22px; height:2px; background:var(--chalk); transition:all .3s ease; border-radius:1px;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0; transform:scaleX(0);}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .mobile-menu{
+    display:none; position:fixed; top:65px; left:0; right:0; bottom:0; z-index:150;
+    background:var(--ink); padding:24px 24px 40px; flex-direction:column; gap:0;
+    overflow-y:auto;
+  }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{
+    color:var(--chalk); text-decoration:none; font-size:22px; font-family:'Bebas Neue',sans-serif;
+    padding:18px 4px; border-bottom:1px solid var(--line); transition:color .2s;
+  }
+  .mobile-menu a:first-child{border-top:1px solid var(--line);}
+  .mobile-menu a:hover, .mobile-menu a.active{color:var(--gold);}
+  .mobile-menu-footer{
+    margin-top:32px; display:flex; gap:24px; align-items:center;
+    font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim);
+  }
+  .mobile-menu-footer a{color:var(--steel-dim); text-decoration:none;}
+  .mobile-menu-footer a:hover{color:var(--chalk);}
+
+  @media(max-width:900px){
+    .hamburger{display:flex;}
+    .nav-links{display:none !important;}
+    .nav-desktop-icons{gap:14px;}
+    .nav-desktop-icons button[aria-label="Search"],
+    .nav-desktop-icons button[aria-label="Wishlist"]{display:none;}
+  }
+
+  .page-head{padding:48px 48px 0;}
+  .breadcrumb{font-size:12px; color:var(--steel-dim); margin-bottom:14px;}
+  .breadcrumb a{color:var(--steel-dim); text-decoration:none;}
+  .breadcrumb span{color:var(--chalk);}
+  .page-head h1{font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,6vw,60px); line-height:1;}
+  .page-head p{color:var(--steel-dim); font-size:14px; margin-top:8px;}
+
+  .wish-wrap{padding:36px 48px 100px;}
+
+  .wish-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .product-card{background:var(--charcoal); border:1px solid var(--line); transition:border-color .3s; cursor:pointer;}
+  .product-card:hover{border-color:var(--steel-dim);}
+  .card-art{height:220px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
+  .card-art svg{width:68%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art svg{transform:translateY(-5px) scale(1.04);}
+  .badge{position:absolute; top:12px; left:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:5px 9px; background:var(--gold); color:var(--ink); font-weight:500;}
+  .badge.sale{background:var(--blue); color:var(--chalk);}
+  .card-remove{
+    position:absolute; top:12px; right:12px; background:rgba(11,11,12,0.6); border:none; color:var(--chalk);
+    width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .card-remove:hover{color:var(--gold);}
+  .card-body{padding:16px 16px 18px;}
+  .card-body .mono{font-size:10px; color:var(--steel-dim);}
+  .card-body h4{font-size:15px; font-weight:600; margin:5px 0 6px;}
+  .card-sizes{display:flex; gap:4px; margin-bottom:12px; flex-wrap:wrap;}
+  .size-pip{font-size:9px; font-family:'JetBrains Mono',monospace; color:var(--steel-dim); border:1px solid var(--line); padding:3px 5px;}
+  .card-price-row{display:flex; justify-content:space-between; align-items:center;}
+  .card-price{font-family:'JetBrains Mono',monospace; font-size:14px;}
+  .card-price .strike{color:var(--steel-dim); text-decoration:line-through; font-size:12px; margin-right:6px;}
+  .quick-add{
+    font-size:11px; letter-spacing:0.04em; text-transform:uppercase; font-weight:600;
+    padding:7px 14px; border:1px solid var(--chalk); background:transparent; color:var(--chalk);
+    cursor:pointer; transition:all .25s;
+  }
+  .quick-add:hover{background:var(--chalk); color:var(--ink);}
+
+  .empty-wish{display:none; flex-direction:column; align-items:center; text-align:center; padding:80px 20px;}
+  .empty-wish svg{width:60px; color:var(--steel-dim); margin-bottom:20px;}
+  .empty-wish h3{font-family:'Bebas Neue',sans-serif; font-size:28px; margin-bottom:10px;}
+  .empty-wish p{color:var(--steel-dim); font-size:14px; margin-bottom:24px;}
+  .btn-shop{
+    background:var(--chalk); color:var(--ink); padding:14px 32px; border:none;
+    font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    text-decoration:none; display:inline-block; transition:background .25s;
+  }
+  .btn-shop:hover{background:var(--blue); color:var(--chalk);}
+
+  .wish-actions{display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;}
+  .result-count{font-size:13px; color:var(--steel-dim);}
+  .clear-wish{background:none; border:none; color:var(--steel-dim); font-size:13px; text-decoration:underline; cursor:pointer;}
+  .clear-wish:hover{color:var(--chalk);}
+
+  @media(max-width:900px){
+    nav{padding:16px 20px;}
+    .page-head{padding:36px 20px 0;}
+    .wish-wrap{padding:24px 20px 60px;}
+    .wish-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+  }
+</style>
+<script src="eleven-cart.js"></script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo" style="text-decoration:none; color:var(--chalk);">ELEVEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="">Home</a></li>
+    <li><a href="about.html" class="">About</a></li>
+    <li><a href="new-arrivals.html" class="">New Arrivals</a></li>
+    <li><a href="shop.html" class="">Shop</a></li>
+    <li><a href="contact.html" class="">Contact</a></li>
+  </ul>
+  <div class="nav-icons nav-desktop-icons">
+    <button aria-label="Search" onclick="window.location.href='search.html'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button aria-label="Wishlist" class="active" style="color:var(--gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <button aria-label="Cart" onclick="window.location.href='cart.html'" style="position:relative;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count" style="display:none; position:absolute; top:-4px; right:-4px; background:var(--blue); color:var(--chalk); font-size:9px; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; font-family:Inter,sans-serif; font-weight:700;"></span>
+    </button>
+  </div>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="">Home</a>
+    <a href="about.html" class="">About</a>
+    <a href="new-arrivals.html" class="">New Arrivals</a>
+    <a href="shop.html" class="">Shop</a>
+    <a href="contact.html" class="">Contact</a>
+    <a href="search.html">Search</a>
+    <a href="wishlist.html" class="active">Wishlist</a>
+    <div class="mobile-menu-footer">
+      <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
+      <span>·</span>
+      <a href="mailto:sahilmuhd123@gmail.com">Email</a>
+      <span>·</span>
+      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-head">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <span>Wishlist</span></div>
+  <h1 class="display">Your wishlist</h1>
+  <p>Saved styles you can come back to, anytime.</p>
+</div>
+
+<div class="wish-wrap">
+  <div class="wish-actions" id="wishActions" style="display:none;">
+    <span class="result-count mono" id="wishCount">0 items</span>
+    <button class="clear-wish" onclick="clearWishlist()">Clear all</button>
+  </div>
+
+  <div class="wish-grid" id="wishGrid"></div>
+
+  <div class="empty-wish" id="emptyWish">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <h3>Your wishlist is empty</h3>
+    <p>Tap the heart on any product to save it here.</p>
+    <a href="shop.html" class="btn-shop">Browse the shop</a>
+  </div>
+</div>
+
+<script>
+/* ===== Product catalog — kept in sync with shop.html ===== */
+const shoeShapes = [
+  '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
+  '<rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/>',
+  '<path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/>',
+  '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
+];
+
+const allProducts = [
+  { name:'Stride Runner',  sku:'RN-001', price:6499,  shape:0, sizes:[7,8,9,10], isNew:true,  onSale:false },
+  { name:'Off-Court Low',  sku:'CS-014', price:4999,  shape:1, sizes:[6,7,9],     isNew:false, onSale:true  },
+  { name:'Velocity Mid',   sku:'RN-007', price:5299,  shape:2, sizes:[8,9,10,11],isNew:false, onSale:true  },
+  { name:'Drift Slide',    sku:'SL-002', price:2199,  shape:3, sizes:[7,8,9],     isNew:false, onSale:false },
+  { name:'Apex Trainer',   sku:'RN-012', price:7299,  shape:0, sizes:[8,9,10],    isNew:true,  onSale:false },
+  { name:'Sector One',     sku:'CS-009', price:4599,  shape:1, sizes:[6,7,8],     isNew:false, onSale:false },
+  { name:'Glide Pro',      sku:'RN-018', price:6899,  shape:2, sizes:[7,8,9,10],  isNew:false, onSale:false },
+  { name:'Form Low',       sku:'CS-021', price:5099,  shape:1, sizes:[8,9,10],    isNew:false, onSale:true  },
+  { name:'Edge Runner',    sku:'RN-005', price:6299,  shape:0, sizes:[6,7,8,9],   isNew:true,  onSale:false },
+  { name:'Loop Mid',       sku:'CS-017', price:4799,  shape:1, sizes:[9,10,11],   isNew:false, onSale:false },
+  { name:'Vault Slide',    sku:'SL-008', price:2499,  shape:3, sizes:[6,7,8],     isNew:false, onSale:false },
+  { name:'Stratus Trainer',sku:'RN-023', price:7499,  shape:2, sizes:[8,9,10,11],isNew:true,  onSale:false },
+];
+
+function renderWishlist(){
+  const wishedSkus = ELEVEN.getWishlist();
+  const items = allProducts.filter(p => wishedSkus.includes(p.sku));
+  const grid = document.getElementById('wishGrid');
+  const empty = document.getElementById('emptyWish');
+  const actions = document.getElementById('wishActions');
+
+  if(items.length === 0){
+    grid.innerHTML = '';
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    actions.style.display = 'none';
+    return;
+  }
+
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+  actions.style.display = 'flex';
+  document.getElementById('wishCount').textContent = items.length + (items.length === 1 ? ' item' : ' items');
+
+  grid.innerHTML = items.map(p => {
+    const salePrice = p.onSale ? Math.round(p.price * 0.85) : p.price;
+    return `
+    <div class="product-card" onclick="window.location.href='product.html'">
+      <div class="card-art">
+        ${p.isNew ? '<span class="badge">New</span>' : p.onSale ? '<span class="badge sale">-15%</span>' : ''}
+        <button class="card-remove" aria-label="Remove from wishlist" onclick="event.stopPropagation(); removeFromWishlist('${p.sku}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>
+      </div>
+      <div class="card-body">
+        <span class="mono">ELV-${p.sku}</span>
+        <h4>${p.name}</h4>
+        <div class="card-sizes">${p.sizes.map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
+        <div class="card-price-row">
+          <span class="card-price">${p.onSale ? `<span class="strike">₹${p.price.toLocaleString('en-IN')}</span>` : ''}₹${salePrice.toLocaleString('en-IN')}</span>
+          <button class="quick-add" onclick="event.stopPropagation(); addToCartFromWish(${JSON.stringify(p).replace(/"/g,'&quot;')})">Add</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeFromWishlist(sku){
+  ELEVEN.toggleWish(sku);
+  ELEVEN.showToast('Removed from wishlist');
+  renderWishlist();
+}
+function clearWishlist(){
+  ELEVEN.saveWishlist([]);
+  renderWishlist();
+}
+function addToCartFromWish(p){
+  ELEVEN.addToCart({ sku: p.sku, name: p.name, size: 'UK ' + p.sizes[0], color: 'Charcoal', price: p.onSale ? Math.round(p.price*0.85) : p.price, shape: p.shape });
+  ELEVEN.showToast(p.name + ' added to cart');
+}
+
+renderWishlist();
+</script>
+
+</body>
+</html>
