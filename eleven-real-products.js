@@ -16,7 +16,7 @@ const ELEVEN_REAL_PRODUCTS = [
     inStock: true,
     images: ['images/products/sb-dunk-stussy/1.jpeg','images/products/sb-dunk-stussy/2.jpeg','images/products/sb-dunk-stussy/3.jpeg','images/products/sb-dunk-stussy/4.jpeg'],
     colorway: 'Pine Green / Sail / Gold',
-    desc: 'A rare Nike SB Dunk Low collaboration with Stüssy, dressed in pine green and gold with the brand\\'s signature script across the upper. Comes with original box and accessories.'
+    desc: 'A rare Nike SB Dunk Low collaboration with Stüssy, dressed in pine green and gold with the brand\'s signature script across the upper. Comes with original box and accessories.'
   },
   {
     sku: 'NB-9060-NRG',
@@ -48,7 +48,7 @@ const ELEVEN_REAL_PRODUCTS = [
     inStock: true,
     images: ['images/products/nike-cortez/1.jpeg','images/products/nike-cortez/2.jpeg','images/products/nike-cortez/3.jpeg','images/products/nike-cortez/4.jpeg'],
     colorway: 'White / Green / Orange',
-    desc: 'The original Nike Cortez in a classic white leather upper with green swoosh and orange trim — a timeless runner that\\'s stayed in rotation since 1972.'
+    desc: 'The original Nike Cortez in a classic white leather upper with green swoosh and orange trim — a timeless runner that\'s stayed in rotation since 1972.'
   },
   {
     sku: 'NB-1906R-BS',
@@ -96,7 +96,7 @@ const ELEVEN_REAL_PRODUCTS = [
     inStock: true,
     images: ['images/products/onitsuka-mexico66/1.jpeg','images/products/onitsuka-mexico66/2.jpeg','images/products/onitsuka-mexico66/3.jpeg','images/products/onitsuka-mexico66/4.jpeg'],
     colorway: 'Birch / Peacoat',
-    desc: 'The legendary Mexico 66 in a muted birch and peacoat colorway. Featuring the iconic side stripe and a low-profile silhouette that\\'s defined retro running style for decades.'
+    desc: 'The legendary Mexico 66 in a muted birch and peacoat colorway. Featuring the iconic side stripe and a low-profile silhouette that\'s defined retro running style for decades.'
   },
   {
     sku: 'AJ4-RED-SDE',

@@ -270,6 +270,8 @@
     transform:translateY(0) !important;
     transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
   }
+  /* ===== Pricing hidden site-wide for now ===== */
+  .card-price, #priceFilterGroup { display:none !important; }
 </style>
 <script src="eleven-cart.js"></script>
 <script src="eleven-real-products.js"></script>
@@ -391,7 +393,7 @@
       </div>
     </div>
 
-    <div class="filter-group">
+    <div class="filter-group" id="priceFilterGroup">
       <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
         <h4>Price</h4>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -432,8 +434,6 @@
       <div class="toolbar-right">
         <select class="sort-select" id="sortSelect">
           <option>Sort: Featured</option>
-          <option>Price: Low to high</option>
-          <option>Price: High to low</option>
           <option>Newest first</option>
           <option>Best selling</option>
         </select>

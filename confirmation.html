@@ -213,6 +213,8 @@
     transform:translateY(0) !important;
     transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
   }
+  /* ===== Pricing hidden site-wide for now ===== */
+  #conf-totals { display:none !important; }
 </style>
 <script src="eleven-cart.js"></script>
 <script src="eleven-real-products.js"></script>
@@ -373,7 +375,6 @@
       itemsEl.innerHTML = snapshot.map(function(it){
         return '<div style="display:flex;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line);font-size:13px;">'
           + '<span><strong>'+it.name+'</strong> &middot; '+it.size+' &times;'+it.qty+'</span>'
-          + '<span class="mono">&#x20B9;'+Math.round(it.price*it.qty).toLocaleString('en-IN')+'</span>'
           + '</div>';
       }).join('');
     }

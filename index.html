@@ -397,6 +397,8 @@
     transform:translateY(0) !important;
     transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
   }
+  /* ===== Pricing hidden site-wide for now ===== */
+  .card-price { display:none !important; }
 </style>
 <script src="eleven-cart.js"></script>
 <script src="eleven-real-products.js"></script>
@@ -483,36 +485,36 @@
   </div>
 
   <div class="collections-grid">
-    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+    <a class="collection-tile" href="product.html?sku=AJ4-THDR-BY" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <svg width="260" viewBox="0 0 400 220" aria-hidden="true"><path d="M30 170 C30 150 60 138 110 132 C170 126 220 105 260 80 C300 58 340 50 380 56" fill="none" stroke="#3a3a3d" stroke-width="2"/><ellipse cx="200" cy="170" rx="170" ry="14" fill="#242426"/></svg>
+        <img src="images/products/aj4-thunder/1.jpeg" alt="Air Jordan 4 Thunder" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
-        <span class="mono">N°01 — RUN</span>
-        <h3>Running</h3>
+        <span class="mono">N°01 — JORDAN</span>
+        <h3>Air Jordan 4</h3>
       </div>
     </a>
-    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+    <a class="collection-tile" href="product.html?sku=NB-9060-NRG" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <svg width="180" viewBox="0 0 300 180" aria-hidden="true"><rect x="60" y="70" width="180" height="60" rx="20" fill="#242426"/></svg>
+        <img src="images/products/nb-9060-nori/1.jpeg" alt="New Balance 9060" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
-        <span class="mono">N°02 — STREET</span>
-        <h3>Casual</h3>
+        <span class="mono">N°02 — NB</span>
+        <h3>New Balance</h3>
       </div>
     </a>
-    <a class="collection-tile" href="shop.html" style="text-decoration:none; color:inherit;">
+    <a class="collection-tile" href="product.html?sku=NK-CTZ-WGO" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <svg width="180" viewBox="0 0 300 180" aria-hidden="true"><path d="M70 110 Q150 60 230 110 L210 140 Q150 100 90 140 Z" fill="#242426"/></svg>
+        <img src="images/products/nike-cortez/1.jpeg" alt="Nike Cortez" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
-        <span class="mono">N°03 — SLIDE</span>
-        <h3>Slides</h3>
+        <span class="mono">N°03 — NIKE</span>
+        <h3>Classics</h3>
       </div>
     </a>
-    <a class="collection-tile" href="shop.html" style="grid-column:2 / 4; text-decoration:none; color:inherit;">
+    <a class="collection-tile" href="product.html?sku=SBD-STU-001" style="grid-column:2 / 4; text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <svg width="320" viewBox="0 0 500 160" aria-hidden="true"><path d="M40 120 C40 100 80 90 140 86 C220 80 300 60 360 45 C410 33 450 30 480 40" fill="none" stroke="#3a3a3d" stroke-width="2"/></svg>
+        <img src="images/products/sb-dunk-stussy/1.jpeg" alt="Nike SB Dunk x Stussy" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
         <span class="mono">N°04 — LIMITED</span>
@@ -543,7 +545,7 @@
     <div class="section-count mono"><a href="shop.html" style="color:var(--steel-dim); text-decoration:none;">SS26 — 12 styles →</a></div>
   </div>
 
-  <div class="rail-scroll">
+  <div class="rail-scroll" id="newArrivalsRail">
 
     <div class="product-card" onclick="window.location.href='product.html'" style="cursor:pointer;">
       <div class="card-art">
@@ -765,41 +767,43 @@
 </script>
 <script>
 (function(){
-  var rail = document.querySelector('.rail-scroll');
-  if(!rail) return;
-  var isDown = false, startX = 0, scrollLeft = 0, velX = 0, lastX = 0, lastT = 0, rafId;
+  var rails = document.querySelectorAll('.rail-scroll');
+  if(!rails.length) return;
 
-  rail.addEventListener('mousedown', function(e){
-    isDown = true;
-    rail.classList.add('dragging');
-    startX = e.pageX - rail.offsetLeft;
-    scrollLeft = rail.scrollLeft;
-    velX = 0; lastX = e.pageX; lastT = Date.now();
-    cancelAnimationFrame(rafId);
-  });
+  rails.forEach(function(rail){
+    var isDown = false, startX = 0, scrollLeft = 0, velX = 0, lastX = 0, lastT = 0, rafId;
 
-  document.addEventListener('mouseup', function(){
-    if(!isDown) return;
-    isDown = false;
-    rail.classList.remove('dragging');
-    // momentum glide
-    (function glide(){
-      velX *= 0.92;
-      if(Math.abs(velX) < 0.5) return;
-      rail.scrollLeft -= velX;
-      rafId = requestAnimationFrame(glide);
-    })();
-  });
+    rail.addEventListener('mousedown', function(e){
+      isDown = true;
+      rail.classList.add('dragging');
+      startX = e.pageX - rail.offsetLeft;
+      scrollLeft = rail.scrollLeft;
+      velX = 0; lastX = e.pageX; lastT = Date.now();
+      cancelAnimationFrame(rafId);
+    });
 
-  document.addEventListener('mousemove', function(e){
-    if(!isDown) return;
-    e.preventDefault();
-    var x = e.pageX - rail.offsetLeft;
-    var now = Date.now();
-    var dt = now - lastT || 1;
-    velX = (e.pageX - lastX) / dt * 16;
-    lastX = e.pageX; lastT = now;
-    rail.scrollLeft = scrollLeft - (x - startX);
+    document.addEventListener('mouseup', function(){
+      if(!isDown) return;
+      isDown = false;
+      rail.classList.remove('dragging');
+      (function glide(){
+        velX *= 0.92;
+        if(Math.abs(velX) < 0.5) return;
+        rail.scrollLeft -= velX;
+        rafId = requestAnimationFrame(glide);
+      })();
+    });
+
+    document.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - rail.offsetLeft;
+      var now = Date.now();
+      var dt = now - lastT || 1;
+      velX = (e.pageX - lastX) / dt * 16;
+      lastX = e.pageX; lastT = now;
+      rail.scrollLeft = scrollLeft - (x - startX);
+    });
   });
 
   // touch already works natively — no touch code needed

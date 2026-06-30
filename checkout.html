@@ -113,6 +113,8 @@
     .checkout-layout{grid-template-columns:1fr; padding:24px 20px 60px; gap:24px;}
     .action-card{position:static;}
   }
+  /* ===== Pricing hidden site-wide for now ===== */
+  .item-price, .summary-row, .card-price { display:none !important; }
 </style>
 <script src="eleven-cart.js"></script>
 <script src="eleven-real-products.js"></script>
@@ -154,7 +156,7 @@
 
   <!-- RIGHT: totals + WhatsApp -->
   <div class="action-card">
-    <h2 class="display">Total</h2>
+    <h2 class="display">Order summary</h2>
     <div id="orderTotals">
       <div class="summary-row"><span>Subtotal</span><span class="mono" id="subtotalVal">—</span></div>
       <div class="summary-row" id="discountRow" style="display:none;"><span id="discountLabel">Discount</span><span class="mono" id="discountVal" style="color:var(--gold);">—</span></div>
