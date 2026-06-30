@@ -423,38 +423,26 @@ const shoeShapes = [
   '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
 ];
 
-const newProducts = [
-  {name:'Stride Runner', sku:'RN-001', price:6499, shape:0, sizes:[7,8,9,10], badge:'new'},
-  {name:'Apex Trainer',  sku:'RN-012', price:7299, shape:0, sizes:[8,9,10],   badge:'new'},
-  {name:'Glide Pro',     sku:'RN-018', price:6899, shape:2, sizes:[7,8,9,10], badge:'new'},
-  {name:'Stratus Trainer',sku:'RN-023',price:7499, shape:2, sizes:[8,9,10,11],badge:'limited'},
-  {name:'Sector One',    sku:'CS-009', price:4599, shape:1, sizes:[6,7,8],    badge:'new'},
-];
-
-const saleProducts = [
-  {name:'Off-Court Low', sku:'CS-014', price:4999, was:5999, shape:1, sizes:[6,7,9],    badge:'sale'},
-  {name:'Velocity Mid',  sku:'RN-007', price:5299, was:6599, shape:2, sizes:[8,9,10,11],badge:'sale'},
-];
-
 function renderCard(p, container) {
-  const badgeMap = {new:'badge-new', sale:'badge-sale', limited:'badge-limited'};
-  const badgeLabel = {new:'New', sale:'-20%', limited:'Limited'};
-  const wasHtml = p.was ? `<span class="was">${ELEVEN.fmt(p.was)}</span>` : '';
+  const badgeLabel = p.onSale ? '-' + Math.round((1 - p.price/p.strike)*100) + '%' : (p.isNew ? 'New' : '');
+  const badgeClass = p.onSale ? 'badge-sale' : 'badge-new';
+  const wasHtml = (p.onSale && p.strike) ? `<span class="was">${ELEVEN.fmt(p.strike)}</span>` : '';
+  const img = (p.images && p.images[0]) || '';
   const div = document.createElement('div');
   div.className = 'product-card';
-  div.onclick = () => window.location.href = 'product.html';
+  div.onclick = () => window.location.href = 'product.html?sku=' + encodeURIComponent(p.sku);
   div.innerHTML = `
-    <div class="card-art">
-      <span class="badge-pill ${badgeMap[p.badge]}">${badgeLabel[p.badge]}</span>
-      <svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>
+    <div class="card-art" style="overflow:hidden;">
+      ${badgeLabel ? `<span class="badge-pill ${badgeClass}">${badgeLabel}</span>` : ''}
+      ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;">` : `<svg viewBox="0 0 300 180">${shoeShapes[0]}</svg>`}
     </div>
     <div class="card-body">
       <span class="mono">ELV-${p.sku}</span>
       <h4>${p.name}</h4>
-      <div class="card-sizes">${p.sizes.map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
+      <div class="card-sizes">${(p.sizes||[]).map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
       <div class="card-price-row">
         <span class="card-price">${wasHtml}${ELEVEN.fmt(p.price)}</span>
-        <button class="btn" style="padding:8px 16px;font-size:11px;" onclick="event.stopPropagation();ELEVEN.addToCart({sku:'${p.sku}',name:'${p.name}',size:'UK ${p.sizes[0]}',color:'Charcoal',price:${p.price},shape:${p.shape}});ELEVEN.showToast('${p.name} added');">Add</button>
+        <button class="btn" style="padding:8px 16px;font-size:11px;" onclick="event.stopPropagation();ELEVEN.addToCart({sku:'${p.sku}',name:'${p.name}',size:'UK ${(p.sizes&&p.sizes[0])||8}',color:'${p.colorway||'Charcoal'}',price:${p.price},shape:0,image:'${img}'});ELEVEN.showToast('${p.name} added');">Add</button>
       </div>
     </div>`;
   container.appendChild(div);
@@ -463,6 +451,9 @@ function renderCard(p, container) {
 document.addEventListener('DOMContentLoaded', () => {
   const newGrid = document.getElementById('newGrid');
   const saleGrid = document.getElementById('saleGrid');
+  const catalog = getElevenCatalog();
+  const newProducts = catalog.filter(p => p.isNew);
+  const saleProducts = catalog.filter(p => p.onSale);
   newProducts.forEach(p => renderCard(p, newGrid));
   saleProducts.forEach(p => renderCard(p, saleGrid));
 });

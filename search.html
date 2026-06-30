@@ -286,7 +286,7 @@ const allProducts = [
   { name:'Loop Mid',       sku:'CS-017', price:4799,  shape:1, cats:['Casual'],   sizes:[9,10,11],    isNew:false, onSale:false },
   { name:'Vault Slide',    sku:'SL-008', price:2499,  shape:3, cats:['Slides'],   sizes:[6,7,8],      isNew:false, onSale:false },
   { name:'Stratus Trainer',sku:'RN-023', price:7499,  shape:2, cats:['Running','Limited edition'], sizes:[8,9,10,11], isNew:true, onSale:false },
-].concat((typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []).map(function(p){
+].concat((typeof getElevenCatalog === 'function' ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : [])).map(function(p){
   return { name:p.name, sku:p.sku, price:p.price, shape:0, cats:p.cats, sizes:p.sizes, isNew:p.isNew, onSale:p.onSale, real:true, image:p.images[0], brand:p.brand };
 }));
 

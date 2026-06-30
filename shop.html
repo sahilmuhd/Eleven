@@ -764,7 +764,8 @@
 (function(){
   var grid = document.getElementById('realProductsGrid');
   if(!grid || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
-  grid.innerHTML = ELEVEN_REAL_PRODUCTS.map(function(p){
+  var REAL_CATALOG = (typeof getElevenCatalog === 'function') ? getElevenCatalog() : ELEVEN_REAL_PRODUCTS;
+  grid.innerHTML = REAL_CATALOG.map(function(p){
     var inWish = ELEVEN.isWished(p.sku);
     return '<div class="product-card sr" style="cursor:pointer;" onclick="window.location.href=\'product.html?sku='+p.sku+'\'">'
       + '<div class="card-art">'

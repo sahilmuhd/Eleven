@@ -594,7 +594,8 @@
   var params = new URLSearchParams(window.location.search);
   var sku = params.get('sku');
   if(!sku || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
-  var p = ELEVEN_REAL_PRODUCTS.find(function(x){ return x.sku === sku; });
+  var REAL_CATALOG = (typeof getElevenCatalog === 'function') ? getElevenCatalog() : ELEVEN_REAL_PRODUCTS;
+  var p = REAL_CATALOG.find(function(x){ return x.sku === sku; });
   if(!p) return;
 
   // ---- Title, breadcrumb, SKU ----
@@ -759,11 +760,11 @@
   var recentGrid = document.getElementById('recentGrid');
   if(relatedGrid){
     relatedGrid.innerHTML = '';
-    ELEVEN_REAL_PRODUCTS.filter(function(x){ return x.sku !== p.sku; }).slice(0,4).forEach(function(prod){ relatedGrid.appendChild(buildRealCard(prod)); });
+    REAL_CATALOG.filter(function(x){ return x.sku !== p.sku; }).slice(0,4).forEach(function(prod){ relatedGrid.appendChild(buildRealCard(prod)); });
   }
   if(recentGrid){
     recentGrid.innerHTML = '';
-    ELEVEN_REAL_PRODUCTS.filter(function(x){ return x.sku !== p.sku; }).slice(4,8).forEach(function(prod){ recentGrid.appendChild(buildRealCard(prod)); });
+    REAL_CATALOG.filter(function(x){ return x.sku !== p.sku; }).slice(4,8).forEach(function(prod){ recentGrid.appendChild(buildRealCard(prod)); });
   }
 })();
 </script>

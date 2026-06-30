@@ -262,7 +262,7 @@ const allProducts = [
 
 function renderWishlist(){
   const wishedSkus = ELEVEN.getWishlist();
-  const realItems = (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : [])
+  const realItems = (typeof getElevenCatalog === 'function' ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []))
     .filter(p => wishedSkus.includes(p.sku))
     .map(p => ({ ...p, real: true, image: p.images[0] }));
   const fakeItems = allProducts.filter(p => wishedSkus.includes(p.sku));

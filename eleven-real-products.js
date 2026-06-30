@@ -149,3 +149,17 @@ const ELEVEN_REAL_PRODUCTS = [
 ];
 
 function elevenFmtPrice(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+/* Returns the live catalog: if the admin page has staged changes in this
+   browser (localStorage), those are used so you can preview them before
+   exporting; otherwise falls back to the catalog above. */
+function getElevenCatalog(){
+  try {
+    const staged = localStorage.getItem('eleven_admin_catalog');
+    if(staged){
+      const parsed = JSON.parse(staged);
+      if(Array.isArray(parsed) && parsed.length) return parsed;
+    }
+  } catch(e) { /* ignore and fall back */ }
+  return ELEVEN_REAL_PRODUCTS;
+}
