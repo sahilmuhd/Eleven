@@ -229,8 +229,6 @@
     overflow-x:auto;
     padding-bottom:8px;
     scrollbar-width:none;
-    cursor:grab;
-    user-select:none;
     scroll-behavior:smooth;
   }
   .rail-arrow{
@@ -248,13 +246,6 @@
   .rail-arrow.is-hidden{opacity:0; pointer-events:none;}
   @media(max-width:900px){
     .rail-arrow{display:none;}
-  }
-  .rail-scroll.dragging{
-    cursor:grabbing;
-    scroll-behavior:auto;
-  }
-  .rail-scroll.dragging .product-card{
-    pointer-events:none;
   }
   .rail-scroll::-webkit-scrollbar{display:none;}
   .product-card{
@@ -744,48 +735,15 @@
   }, 400);
 })();
 </script>
+<!-- Click-and-drag rail scrolling removed — it was eating clicks on product cards.
+     Rails still scroll fine via the arrow buttons, trackpad, and touch. -->
 <script>
 (function(){
-  var rails = document.querySelectorAll('.rail-scroll');
-  if(!rails.length) return;
-
-  rails.forEach(function(rail){
-    var isDown = false, startX = 0, scrollLeft = 0, velX = 0, lastX = 0, lastT = 0, rafId;
-
-    rail.addEventListener('mousedown', function(e){
-      isDown = true;
-      rail.classList.add('dragging');
-      startX = e.pageX - rail.offsetLeft;
-      scrollLeft = rail.scrollLeft;
-      velX = 0; lastX = e.pageX; lastT = Date.now();
-      cancelAnimationFrame(rafId);
-    });
-
-    document.addEventListener('mouseup', function(){
-      if(!isDown) return;
-      isDown = false;
-      rail.classList.remove('dragging');
-      (function glide(){
-        velX *= 0.92;
-        if(Math.abs(velX) < 0.5) return;
-        rail.scrollLeft -= velX;
-        rafId = requestAnimationFrame(glide);
-      })();
-    });
-
-    document.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      e.preventDefault();
-      var x = e.pageX - rail.offsetLeft;
-      var now = Date.now();
-      var dt = now - lastT || 1;
-      velX = (e.pageX - lastX) / dt * 16;
-      lastX = e.pageX; lastT = now;
-      rail.scrollLeft = scrollLeft - (x - startX);
-    });
+  // Make sure no leftover 'dragging' state (and its pointer-events:none) lingers.
+  document.querySelectorAll('.rail-scroll').forEach(function(rail){
+    rail.classList.remove('dragging');
+    rail.style.cursor = '';
   });
-
-  // touch already works natively — no touch code needed
 })();
 </script>
 <script>
@@ -941,6 +899,19 @@ function submitNotify(){
 </script>
 <script>
 /* ===== RENDER AUTHENTIC DROPS RAIL ===== */
+function elevenEscAttr(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function elevenEscJs(s){
+  // Safe to embed inside a single-quoted JS string that itself sits inside
+  // a double-quoted HTML attribute (e.g. onclick="...'...'...").
+  return String(s == null ? '' : s)
+    .replace(/\\/g,'\\\\').replace(/'/g,"\\'")
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 (function(){
   var rail = document.getElementById('realRail');
   if(!rail || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
@@ -949,11 +920,11 @@ function submitNotify(){
     return '<div class="product-card" style="cursor:pointer;" onclick="window.location.href=\'product.html?sku='+p.sku+'\'">'
       + '<div class="card-art">'
       + (p.isNew ? '<span class="badge">New</span>' : (p.onSale ? '<span class="badge" style="background:var(--blue);">Sale</span>' : ''))
-      + '<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">'
+      + '<img src="'+elevenEscAttr(p.images[0])+'" alt="'+elevenEscAttr(p.name)+'" loading="lazy">'
       + '</div>'
       + '<div class="card-body">'
-      + '<div class="brand-tag">'+p.brand+'</div>'
-      + '<h4>'+p.name+'</h4>'
+      + '<div class="brand-tag">'+elevenEscAttr(p.brand)+'</div>'
+      + '<h4>'+elevenEscAttr(p.name)+'</h4>'
       + '<div class="card-price-row"><span class="card-price">'+elevenFmtPrice(p.price)+'</span></div>'
       + '</div></div>';
   }).join('');
@@ -971,14 +942,14 @@ function submitNotify(){
     return '<div class="product-card" style="cursor:pointer;" onclick="window.location.href=\'product.html?sku='+p.sku+'\'">'
       + '<div class="card-art">'
       + (p.onSale ? '<span class="badge" style="background:var(--blue);">Sale</span>' : '<span class="badge">New</span>')
-      + '<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">'
+      + '<img src="'+elevenEscAttr(p.images[0])+'" alt="'+elevenEscAttr(p.name)+'" loading="lazy">'
       + '</div>'
       + '<div class="card-body">'
-      + '<div class="brand-tag">'+p.brand+'</div>'
-      + '<h4>'+p.name+'</h4>'
+      + '<div class="brand-tag">'+elevenEscAttr(p.brand)+'</div>'
+      + '<h4>'+elevenEscAttr(p.name)+'</h4>'
       + '<div class="card-sizes">'+(p.sizes||[]).map(function(s){return '<span class="size-pip">UK '+s+'</span>';}).join('')+'</div>'
       + '<div class="card-price-row"><span class="card-price">'+elevenFmtPrice(p.price)+'</span>'
-      + '<button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:\''+p.sku+'\',name:\''+p.name+'\',size:\'UK '+((p.sizes&&p.sizes[0])||8)+'\',color:\''+(p.colorway||'Charcoal')+'\',price:'+p.price+',shape:0,image:\''+p.images[0]+'\'}); ELEVEN.showToast(\''+p.name+' added\');">Add</button>'
+      + '<button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:\''+elevenEscJs(p.sku)+'\',name:\''+elevenEscJs(p.name)+'\',size:\'UK '+((p.sizes&&p.sizes[0])||8)+'\',color:\''+elevenEscJs(p.colorway||'Charcoal')+'\',price:'+p.price+',shape:0,image:\''+elevenEscJs(p.images[0])+'\'}); ELEVEN.showToast(\''+elevenEscJs(p.name)+' added\');">Add</button>'
       + '</div></div></div>';
   }).join('');
 })();

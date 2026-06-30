@@ -639,15 +639,27 @@
   function renderRealMain(){
     var mainSvg = document.getElementById('mainSvg');
     if(mainSvg) mainSvg.style.display = 'none';
+
+    // Blurred, zoomed-in backdrop of the same photo — fills the frame with
+    // no empty bars, while the crisp foreground photo stays fully visible.
+    var bg = document.getElementById('mainPhotoBg');
+    if(!bg){
+      bg = document.createElement('div');
+      bg.id = 'mainPhotoBg';
+      bg.style.cssText = 'position:absolute; inset:0; background-size:cover; background-position:center; filter:blur(28px) brightness(0.6) saturate(1.1); transform:scale(1.25); z-index:0;';
+      galleryMain.insertBefore(bg, galleryMain.firstChild);
+    }
+
     var existingImg = document.getElementById('mainPhoto');
     if(!existingImg){
       existingImg = document.createElement('img');
       existingImg.id = 'mainPhoto';
-      existingImg.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
+      existingImg.style.cssText = 'width:100%; height:100%; object-fit:contain; display:block; position:relative; z-index:1;';
       galleryMain.insertBefore(existingImg, galleryMain.querySelector('.gallery-nav-btn.next'));
     }
     existingImg.src = p.images[imgIdx];
     existingImg.alt = p.name + ' — angle ' + (imgIdx+1);
+    bg.style.backgroundImage = 'url(' + p.images[imgIdx] + ')';
   }
   function renderRealThumbs(){
     thumbRow.innerHTML = p.images.map(function(src, i){

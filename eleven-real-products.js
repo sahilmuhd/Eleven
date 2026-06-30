@@ -68,7 +68,7 @@ const ELEVEN_REAL_PRODUCTS = [
   },
   {
     sku: 'AJ4-THDR-BY',
-    name: 'Air Jordan 4 "Thunder"',
+    name: 'Air Jordan 4 “Thunder”',
     brand: 'Jordan',
     price: 24999,
     strike: 27999,
@@ -116,7 +116,7 @@ const ELEVEN_REAL_PRODUCTS = [
   },
   {
     sku: 'AJ4-NVW-RD',
-    name: 'Air Jordan 4 "Navy Travis"',
+    name: 'Air Jordan 4 “Navy Travis”',
     brand: 'Jordan',
     price: 25999,
     strike: 0,
@@ -132,7 +132,7 @@ const ELEVEN_REAL_PRODUCTS = [
   },
   {
     sku: 'AJ4-SB-PINE',
-    name: 'Air Jordan 4 SB "Pine Green"',
+    name: 'Air Jordan 4 SB “Pine Green”',
     brand: 'Nike SB × Jordan',
     price: 26999,
     strike: 0,
