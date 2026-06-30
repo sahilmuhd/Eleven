@@ -240,27 +240,7 @@ function render() {
   }
 }
 
-function absoluteUrl(path) {
-  if (!path) return '';
-  try { return new URL(path, window.location.href).href; }
-  catch { return path; }
-}
-
-// Best-effort: turn a (possibly relative) image path into a shareable File.
-// Returns null if it can't be fetched (e.g. CORS, offline, missing image).
-async function imageToFile(path, filename) {
-  try {
-    const res = await fetch(absoluteUrl(path));
-    if (!res.ok) return null;
-    const blob = await res.blob();
-    if (!blob.type || !blob.type.startsWith('image/')) return null;
-    return new File([blob], filename, { type: blob.type });
-  } catch {
-    return null;
-  }
-}
-
-async function orderOnWhatsApp() {
+function orderOnWhatsApp() {
   const cart = ELEVEN.getCart();
   if (cart.length === 0) return;
 
@@ -288,18 +268,12 @@ async function orderOnWhatsApp() {
   if (discountPct > 0) {
     msgLines.push(`Discount${code ? ' (' + code + ')' : ''}: −${ELEVEN.fmt(discount)}`);
   }
-  msgLines.push(`*Total: ${ELEVEN.fmt(total)}*`, '─────────────────────');
-
-  // Text-only fallback gets the image link(s) inline since it can't attach files.
-  const fallbackMsgLines = msgLines.slice();
-  cart.forEach(i => {
-    if (i.image) fallbackMsgLines.push(`${i.name}: ${absoluteUrl(i.image)}`);
-  });
-  fallbackMsgLines.push('', 'Please confirm my order. Thank you!');
-  const fallbackMsg = fallbackMsgLines.join('\n');
-
-  // Share-API message stays clean since the photo(s) attach as real files.
-  const shareMsg = msgLines.concat(['', 'Please confirm my order. Thank you!']).join('\n');
+  msgLines.push(
+    `*Total: ${ELEVEN.fmt(total)}*`,
+    '─────────────────────',
+    'Please confirm my order. Thank you!'
+  );
+  const msg = msgLines.join('\n');
 
   // Save full snapshot for confirmation page
   localStorage.setItem('eleven_order_id',       orderId);
@@ -308,38 +282,10 @@ async function orderOnWhatsApp() {
   localStorage.setItem('eleven_order_discount', discount);
   localStorage.setItem('eleven_order_total_raw', total);
   localStorage.setItem('eleven_order_coupon',   code || '');
+  ELEVEN.clearCart(); // also clears any applied discount/coupon
 
   const waNumber = '917560943996';
-
-  function goToWhatsAppTextOnly() {
-    window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(fallbackMsg), '_blank');
-  }
-
-  // Try the native share sheet first (lets the photo(s) attach as real images
-  // when the customer picks WhatsApp). Falls back to the plain wa.me text link
-  // — with image URLs included — on desktop or unsupported browsers.
-  if (navigator.share && navigator.canShare) {
-    const filePromises = cart
-      .filter(i => i.image)
-      .slice(0, 4) // WhatsApp's share sheet caps how many files it accepts well
-      .map((i, idx) => imageToFile(i.image, `eleven-${i.sku || idx}.jpg`));
-    const files = (await Promise.all(filePromises)).filter(Boolean);
-
-    if (files.length && navigator.canShare({ files })) {
-      try {
-        await navigator.share({ text: shareMsg, files, title: 'ELEVEN Order ' + orderId });
-        ELEVEN.clearCart();
-        window.location.href = 'confirmation.html';
-        return;
-      } catch (err) {
-        // User cancelled the share sheet, or share failed — fall through to wa.me.
-        if (err && err.name === 'AbortError') return; // they backed out on purpose, don't redirect
-      }
-    }
-  }
-
-  goToWhatsAppTextOnly();
-  ELEVEN.clearCart(); // also clears any applied discount/coupon
+  window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
   window.location.href = 'confirmation.html';
 }
 
