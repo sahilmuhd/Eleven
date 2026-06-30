@@ -201,6 +201,7 @@
   .tile-label h3{font-family:'Bebas Neue',sans-serif; font-size:28px;}
 
   /* ===== NEW ARRIVALS — horizontal scroll rail ===== */
+  .rail-wrap{position:relative;}
   .rail-scroll{
     display:flex;
     gap:24px;
@@ -209,6 +210,23 @@
     scrollbar-width:none;
     cursor:grab;
     user-select:none;
+    scroll-behavior:smooth;
+  }
+  .rail-arrow{
+    position:absolute; top:42%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(11,11,12,0.85); border:1px solid var(--line); color:var(--chalk);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:5; transition:background .2s, border-color .2s, opacity .2s;
+    backdrop-filter:blur(6px);
+  }
+  .rail-arrow:hover{background:var(--charcoal-2); border-color:var(--steel-dim);}
+  .rail-arrow.left{left:-8px;}
+  .rail-arrow.right{right:-8px;}
+  .rail-arrow svg{width:18px; height:18px;}
+  .rail-arrow.is-hidden{opacity:0; pointer-events:none;}
+  @media(max-width:900px){
+    .rail-arrow{display:none;}
   }
   .rail-scroll.dragging{
     cursor:grabbing;
@@ -498,7 +516,7 @@
     </a>
     <a class="collection-tile" href="product.html?sku=NB-9060-NRG" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <img src="images/products/nb-9060-nori/1.jpeg" alt="New Balance 9060" style="width:100%;height:100%;object-fit:cover;">
+        <img src="images/products/nb-9060-nori/1.jpeg" alt="New Balance 9060" style="width:100%;height:100%;object-fit:contain;">
       </div>
       <div class="tile-label">
         <span class="mono">N°02 — NB</span>
@@ -516,7 +534,7 @@
     </a>
     <a class="collection-tile tile-wide" href="product.html?sku=SBD-STU-001" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <img src="images/products/sb-dunk-stussy/1.jpeg" alt="Nike SB Dunk x Stussy" style="width:100%;height:100%;object-fit:cover;">
+        <img src="images/products/sb-dunk-stussy/1.jpeg" alt="Nike SB Dunk x Stussy" style="width:100%;height:100%;object-fit:contain;">
       </div>
       <div class="tile-label">
         <span class="mono">N°04 — LIMITED</span>
@@ -535,7 +553,11 @@
     <div class="section-count mono"><a href="shop.html" style="color:var(--steel-dim); text-decoration:none;">9 pairs in stock →</a></div>
   </div>
 
-  <div class="rail-scroll" id="realRail"></div>
+  <div class="rail-wrap">
+    <button class="rail-arrow left is-hidden" aria-label="Scroll left" data-rail="realRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="rail-scroll" id="realRail"></div>
+    <button class="rail-arrow right" aria-label="Scroll right" data-rail="realRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
 </section>
 
 <section id="new">
@@ -547,7 +569,11 @@
     <div class="section-count mono"><a href="shop.html" style="color:var(--steel-dim); text-decoration:none;">SS26 — 12 styles →</a></div>
   </div>
 
-  <div class="rail-scroll" id="newArrivalsRail"></div>
+  <div class="rail-wrap">
+    <button class="rail-arrow left is-hidden" aria-label="Scroll left" data-rail="newArrivalsRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="rail-scroll" id="newArrivalsRail"></div>
+    <button class="rail-arrow right" aria-label="Scroll right" data-rail="newArrivalsRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
 </section>
 
 <section style="padding:0;">
@@ -932,6 +958,45 @@ function submitNotify(){
       + '<button class="btn" style="padding:8px 16px; font-size:11px;" onclick="event.stopPropagation(); ELEVEN.addToCart({sku:\''+p.sku+'\',name:\''+p.name+'\',size:\'UK '+((p.sizes&&p.sizes[0])||8)+'\',color:\''+(p.colorway||'Charcoal')+'\',price:'+p.price+',shape:0,image:\''+p.images[0]+'\'}); ELEVEN.showToast(\''+p.name+' added\');">Add</button>'
       + '</div></div></div>';
   }).join('');
+})();
+</script>
+<script>
+/* ===== RAIL SLIDER ARROWS ===== */
+(function(){
+  document.querySelectorAll('.rail-wrap').forEach(function(wrap){
+    var railId = null;
+    var leftBtn = wrap.querySelector('.rail-arrow.left');
+    var rightBtn = wrap.querySelector('.rail-arrow.right');
+    if(!leftBtn || !rightBtn) return;
+    railId = leftBtn.getAttribute('data-rail');
+    var rail = document.getElementById(railId);
+    if(!rail) return;
+
+    function cardStep(){
+      var card = rail.querySelector('.product-card');
+      var gap = 24;
+      return card ? card.getBoundingClientRect().width + gap : 320;
+    }
+
+    function updateArrows(){
+      var maxScroll = rail.scrollWidth - rail.clientWidth - 4;
+      leftBtn.classList.toggle('is-hidden', rail.scrollLeft <= 4);
+      rightBtn.classList.toggle('is-hidden', rail.scrollLeft >= maxScroll);
+    }
+
+    leftBtn.addEventListener('click', function(){
+      rail.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+    });
+    rightBtn.addEventListener('click', function(){
+      rail.scrollBy({ left: cardStep(), behavior: 'smooth' });
+    });
+    rail.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+
+    // Re-check once content is rendered (rails fill in async)
+    setTimeout(updateArrows, 300);
+    setTimeout(updateArrows, 1000);
+  });
 })();
 </script>
 </body>

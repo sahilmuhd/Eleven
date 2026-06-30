@@ -55,10 +55,7 @@
 
   /* ===== LAYOUT ===== */
   .shop-layout{
-    display:grid;
-    grid-template-columns:260px 1fr;
-    gap:48px;
-    padding:40px 48px 100px;
+    padding:0 48px 100px;
   }
 
   /* ===== FILTERS ===== */
@@ -127,13 +124,13 @@
   /* ===== PRODUCT GRID ===== */
   .product-grid{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
     gap:24px 20px;
   }
   .product-card{ transform-style:preserve-3d; will-change:transform; background:var(--charcoal); border:1px solid var(--line); transition:border-color .3s; display:flex; flex-direction:column;}
   .product-card:hover{border-color:var(--steel-dim);}
   .card-art{
-    height:240px; background:linear-gradient(135deg, var(--charcoal-2), #161617);
+    height:280px; background:linear-gradient(135deg, var(--charcoal-2), #161617);
     display:flex; align-items:center; justify-content:center;
     position:relative; overflow:hidden;
   }
@@ -143,7 +140,7 @@
   .product-card:hover .card-art img{transform:scale(1.06);}
   .brand-tag{font-size:10px; color:var(--gold); letter-spacing:0.05em; text-transform:uppercase; font-weight:600; margin-bottom:2px;}
   @media(max-width:900px){
-    #realProductsGrid{grid-template-columns:repeat(2,1fr) !important;}
+    .product-grid{grid-template-columns:repeat(2,1fr) !important;}
   }
   .badge{
     position:absolute; top:12px; left:12px;
@@ -190,8 +187,7 @@
     nav{padding:16px 20px;}
     .nav-links{display:none;}
     .page-head{padding:36px 20px 24px;}
-    .shop-layout{grid-template-columns:1fr; padding:24px 20px 60px;}
-    .filters{position:static; order:2;}
+    .shop-layout{padding:24px 20px 60px;}
     .product-grid{grid-template-columns:repeat(2,1fr); gap:16px 12px;}
     .toolbar{flex-wrap:wrap; gap:14px;}
   }
@@ -322,270 +318,72 @@
   <p>Every ELEVEN silhouette in one place — running, casual, slides, and limited archive pieces.</p>
 </div>
 
-<section style="padding:0 48px 56px;">
-  <div class="section-head" style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:20px;">
-    <h3 class="display" style="font-size:28px;">Authentic drops — in stock now</h3>
-    <span class="mono" style="font-size:11px; color:var(--steel-dim);">Verified · Real stock</span>
+<section style="padding:0 48px 0;">
+  <div class="toolbar" style="margin-top:32px;">
+    <span class="result-count mono" id="resultCount">— results</span>
+    <div class="toolbar-right">
+      <select class="sort-select" id="sortSelect">
+        <option value="featured">Sort: Featured</option>
+        <option value="newest">Newest first</option>
+      </select>
+    </div>
   </div>
-  <div class="related-grid" id="realProductsGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;"></div>
 </section>
 
 <div class="shop-layout">
 
-  <aside class="filters">
-    <div class="filter-group">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Category</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <label class="checkbox-row"><input type="checkbox" checked> Running <span class="count">14</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Casual <span class="count">21</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Slides <span class="count">8</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Limited edition <span class="count">5</span></label>
-      </div>
-    </div>
-
-    <div class="filter-group">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Gender</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <label class="checkbox-row"><input type="checkbox"> Men <span class="count">32</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Women <span class="count">18</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Unisex <span class="count">9</span></label>
-      </div>
-    </div>
-
-    <div class="filter-group">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Size (UK)</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <div class="size-grid">
-          <button class="size-btn">6</button>
-          <button class="size-btn selected">7</button>
-          <button class="size-btn">8</button>
-          <button class="size-btn selected">9</button>
-          <button class="size-btn">10</button>
-          <button class="size-btn">11</button>
-          <button class="size-btn">12</button>
-          <button class="size-btn">13</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-group">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Color</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <div class="color-grid">
-          <div class="color-dot selected" style="background:#0B0B0C; border:1px solid #444;" title="Black"></div>
-          <div class="color-dot" style="background:#F7F5F0;" title="White"></div>
-          <div class="color-dot" style="background:#8B9096;" title="Grey"></div>
-          <div class="color-dot" style="background:#C9A368;" title="Gold"></div>
-          <div class="color-dot" style="background:#2F6FED;" title="Blue"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-group" id="priceFilterGroup">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Price</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <div class="price-range">
-          <input type="range" min="1500" max="12000" value="8000" id="priceRange" oninput="document.getElementById('priceVal').textContent='₹'+Number(this.value).toLocaleString('en-IN')">
-          <div class="price-labels"><span>₹1,500</span><span id="priceVal">₹8,000</span><span>₹12,000</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-group" style="border-bottom:none;">
-      <div class="filter-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <h4>Availability</h4>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="filter-body">
-        <label class="checkbox-row"><input type="checkbox"> In stock <span class="count">48</span></label>
-        <label class="checkbox-row"><input type="checkbox"> New arrival <span class="count">12</span></label>
-        <label class="checkbox-row"><input type="checkbox"> Best seller <span class="count">9</span></label>
-        <label class="checkbox-row"><input type="checkbox"> On sale <span class="count">6</span></label>
-      </div>
-    </div>
-
-    <button class="clear-filters">Clear all filters</button>
-  </aside>
-
   <main>
-    <div class="active-filters" id="activeFilters"></div>
-      <div class="filter-chip">Size: UK 9 <button aria-label="Remove">×</button></div>
-      <div class="filter-chip">Category: Running <button aria-label="Remove">×</button></div>
-      <div class="filter-chip">Color: Black <button aria-label="Remove">×</button></div>
-    </div>
-
-    <div class="toolbar">
-      <span class="result-count mono" id="resultCount">48 results</span>
-      <div class="toolbar-right">
-        <select class="sort-select" id="sortSelect">
-          <option>Sort: Featured</option>
-          <option>Newest first</option>
-          <option>Best selling</option>
-        </select>
-        <div class="view-toggle">
-          <button class="active" aria-label="Grid view"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
-          <button aria-label="List view"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        </div>
-      </div>
-    </div>
-
     <div class="product-grid" id="productGrid"></div>
-
-    <div class="pagination">
-      <button class="page-btn">‹</button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn">2</button>
-      <button class="page-btn">3</button>
-      <button class="page-btn">4</button>
-      <button class="page-btn">›</button>
-    </div>
   </main>
 </div>
 
 <script>
-  const shoeShapes = [
-    '<path d="M20 130 C20 112 50 100 100 95 C150 90 200 72 240 55 C265 45 280 42 285 50 C290 60 280 80 255 95 C200 118 120 132 60 134 C40 134 20 134 20 130 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>',
-    '<rect x="50" y="80" width="200" height="55" rx="22" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/><rect x="65" y="60" width="170" height="35" rx="16" fill="#1f1f21" stroke="#4a4a4d" stroke-width="1.2"/>',
-    '<path d="M30 120 C30 100 70 88 130 84 C190 80 240 65 270 48" fill="none" stroke="#4a4a4d" stroke-width="3"/><ellipse cx="150" cy="128" rx="120" ry="12" fill="#2a2a2c"/>',
-    '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
-  ];
-
-  const allProducts = [
-    { name:'Stride Runner',  sku:'RN-001', price:6499,  shape:0, cats:['Running'],  gender:['Men'],   sizes:[7,8,9,10], isNew:true,  onSale:false, inStock:true  },
-    { name:'Off-Court Low',  sku:'CS-014', price:4999,  shape:1, cats:['Casual'],   gender:['Men','Women'], sizes:[6,7,9], isNew:false, onSale:true,  inStock:true  },
-    { name:'Velocity Mid',   sku:'RN-007', price:5299,  shape:2, cats:['Running'],  gender:['Men'],   sizes:[8,9,10,11], isNew:false, onSale:true,  inStock:true  },
-    { name:'Drift Slide',    sku:'SL-002', price:2199,  shape:3, cats:['Slides'],   gender:['Unisex'],sizes:[7,8,9], isNew:false, onSale:false, inStock:true  },
-    { name:'Apex Trainer',   sku:'RN-012', price:7299,  shape:0, cats:['Running'],  gender:['Men'],   sizes:[8,9,10], isNew:true,  onSale:false, inStock:true  },
-    { name:'Sector One',     sku:'CS-009', price:4599,  shape:1, cats:['Casual'],   gender:['Women'], sizes:[6,7,8], isNew:false, onSale:false, inStock:true  },
-    { name:'Glide Pro',      sku:'RN-018', price:6899,  shape:2, cats:['Running'],  gender:['Unisex'],sizes:[7,8,9,10], isNew:false, onSale:false, inStock:true  },
-    { name:'Form Low',       sku:'CS-021', price:5099,  shape:1, cats:['Casual'],   gender:['Men'],   sizes:[8,9,10], isNew:false, onSale:true,  inStock:true  },
-    { name:'Edge Runner',    sku:'RN-005', price:6299,  shape:0, cats:['Running'],  gender:['Women'], sizes:[6,7,8,9], isNew:true, onSale:false, inStock:true  },
-    { name:'Loop Mid',       sku:'CS-017', price:4799,  shape:1, cats:['Casual'],   gender:['Men'],   sizes:[9,10,11], isNew:false, onSale:false, inStock:true  },
-    { name:'Vault Slide',    sku:'SL-008', price:2499,  shape:3, cats:['Slides'],   gender:['Women'], sizes:[6,7,8], isNew:false, onSale:false, inStock:true  },
-    { name:'Stratus Trainer',sku:'RN-023', price:7499,  shape:2, cats:['Running','Limited edition'], gender:['Unisex'],sizes:[8,9,10,11], isNew:true, onSale:false, inStock:true },
-  ];
-
-  let activeFilters = { cats:[], gender:[], sizes:[], maxPrice:12000, avail:[] };
-
   function addQuick(p) {
-    ELEVEN.addToCart({ sku: p.sku, name: p.name, size: 'UK 8', color: 'Charcoal', price: p.price, shape: p.shape });
+    ELEVEN.addToCart({ sku: p.sku, name: p.name, size: 'UK ' + ((p.sizes && p.sizes[0]) || 8), color: p.colorway || 'Charcoal', price: p.price, shape: 0, image: (p.images && p.images[0]) || '' });
     ELEVEN.showToast(p.name + ' added to cart');
-  }
-
-    function getFilteredProducts() {
-    return allProducts.filter(p => {
-      if(activeFilters.cats.length && !activeFilters.cats.some(c => p.cats.includes(c))) return false;
-      if(activeFilters.gender.length && !activeFilters.gender.some(g => p.gender.includes(g))) return false;
-      if(activeFilters.sizes.length && !activeFilters.sizes.some(s => p.sizes.includes(s))) return false;
-      if(p.price > activeFilters.maxPrice) return false;
-      if(activeFilters.avail.includes('In stock') && !p.inStock) return false;
-      if(activeFilters.avail.includes('New arrival') && !p.isNew) return false;
-      if(activeFilters.avail.includes('Best seller') && !p.isBest) return false;
-      if(activeFilters.avail.includes('On sale') && !p.onSale) return false;
-      return true;
-    });
   }
 
   function getSortedProducts(products) {
     const sort = document.getElementById('sortSelect').value;
     const arr = [...products];
-    if(sort === 'low') arr.sort((a,b) => a.price - b.price);
-    else if(sort === 'high') arr.sort((a,b) => b.price - a.price);
-    else if(sort === 'newest') arr.sort((a,b) => (b.isNew?1:0)-(a.isNew?1:0));
+    if(sort === 'newest') arr.sort((a,b) => (b.isNew?1:0)-(a.isNew?1:0));
     return arr;
   }
 
   function renderProducts() {
-    const filtered = getFilteredProducts();
-    const sorted = getSortedProducts(filtered);
+    const catalog = (typeof getElevenCatalog === 'function') ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []);
+    const sorted = getSortedProducts(catalog);
     const grid = document.getElementById('productGrid');
-    document.getElementById('resultCount').textContent = filtered.length + ' results';
+    document.getElementById('resultCount').textContent = sorted.length + ' result' + (sorted.length===1?'':'s');
 
     if(sorted.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1; padding:60px 0; text-align:center; color:var(--steel-dim);"><p style="font-size:14px;">No products match your filters.</p><button onclick="clearAllFilters()" style="margin-top:16px; color:var(--blue); background:none; border:none; cursor:pointer; font-size:13px; text-decoration:underline;">Clear filters</button></div>';
-      renderChips([]);
+      grid.innerHTML = '<div style="grid-column:1/-1; padding:60px 0; text-align:center; color:var(--steel-dim);"><p style="font-size:14px;">No products yet.</p></div>';
       return;
     }
 
     grid.innerHTML = sorted.map(p => {
       const inWish = ELEVEN.isWished(p.sku);
-      const salePrice = p.onSale ? Math.round(p.price * 0.85) : p.price;
+      const img = (p.images && p.images[0]) || '';
       return `
-      <div class="product-card" style="cursor:pointer;" onclick="window.location.href='product.html'" data-sku="${p.sku}">
-        <div class="card-art">
-          ${p.isNew ? '<span class="badge">New</span>' : p.onSale ? '<span class="badge sale">-15%</span>' : ''}
+      <div class="product-card" style="cursor:pointer;" onclick="window.location.href='product.html?sku=${p.sku}'" data-sku="${p.sku}">
+        <div class="card-art" style="overflow:hidden;">
+          ${p.isNew ? '<span class="badge">New</span>' : (p.onSale ? '<span class="badge sale">Sale</span>' : '')}
           <button class="card-wishlist ${inWish?'wishlisted':''}" aria-label="${inWish?'Remove from wishlist':'Add to wishlist'}" onclick="event.stopPropagation(); toggleWish('${p.sku}', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="${inWish?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </button>
-          <svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>
+          ${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">` : ''}
         </div>
         <div class="card-body">
-          <span class="mono">ELV-${p.sku}</span>
+          <div class="brand-tag">${p.brand || ''}</div>
           <h4>${p.name}</h4>
-          <div class="card-rating"><span class="stars">★★★★★</span> 4.7 (${42 + p.price % 80})</div>
-          <div class="card-sizes">${p.sizes.map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
+          <div class="card-sizes">${(p.sizes||[]).map(s=>`<span class="size-pip">UK ${s}</span>`).join('')}</div>
           <div class="card-price-row">
-            <span class="card-price">${p.onSale ? `<span class="strike">₹${p.price.toLocaleString('en-IN')}</span>` : ''}₹${salePrice.toLocaleString('en-IN')}</span>
+            <span class="card-price">${elevenFmtPrice(p.price)}</span>
             <button class="quick-add" onclick="event.stopPropagation(); addQuick(${JSON.stringify(p).replace(/"/g,'&quot;')})">Add</button>
           </div>
         </div>
       </div>`;
     }).join('');
-
-    renderChips(sorted);
-  }
-
-  function renderChips() {
-    const container = document.getElementById('activeFilters');
-    const chips = [];
-    activeFilters.cats.forEach(c => chips.push({label:`Category: ${c}`, remove:()=>{ activeFilters.cats = activeFilters.cats.filter(x=>x!==c); syncCheckboxes(); renderProducts(); }}));
-    activeFilters.gender.forEach(g => chips.push({label:`Gender: ${g}`, remove:()=>{ activeFilters.gender = activeFilters.gender.filter(x=>x!==g); syncCheckboxes(); renderProducts(); }}));
-    activeFilters.sizes.forEach(s => chips.push({label:`Size: UK ${s}`, remove:()=>{ activeFilters.sizes = activeFilters.sizes.filter(x=>x!==s); syncSizeBtns(); renderProducts(); }}));
-    activeFilters.avail.forEach(a => chips.push({label:a, remove:()=>{ activeFilters.avail = activeFilters.avail.filter(x=>x!==a); syncCheckboxes(); renderProducts(); }}));
-    if(activeFilters.maxPrice < 12000) chips.push({label:`Under ₹${activeFilters.maxPrice.toLocaleString('en-IN')}`, remove:()=>{ activeFilters.maxPrice=12000; document.getElementById('priceRange').value=12000; document.getElementById('priceVal').textContent='₹12,000'; renderProducts(); }});
-    container.innerHTML = chips.map((c,i) => `<div class="filter-chip">${c.label} <button aria-label="Remove" onclick="removeChip(${i})">×</button></div>`).join('');
-    window._chips = chips;
-  }
-
-  window.removeChip = function(i){ window._chips[i].remove(); };
-
-  function syncCheckboxes(){
-    document.querySelectorAll('.filter-body .checkbox-row input').forEach(cb => {
-      const label = cb.parentElement.textContent.trim().split(/\s+\d/)[0].trim();
-      if(activeFilters.cats.includes(label) || activeFilters.gender.includes(label) || activeFilters.avail.includes(label)) cb.checked = true;
-      else cb.checked = false;
-    });
-  }
-
-  function syncSizeBtns(){
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      const s = parseInt(btn.textContent);
-      btn.classList.toggle('selected', activeFilters.sizes.includes(s));
-    });
-  }
-
-  function clearAllFilters(){
-    activeFilters = { cats:[], gender:[], sizes:[], maxPrice:12000, avail:[] };
-    syncCheckboxes();
-    syncSizeBtns();
-    document.getElementById('priceRange').value = 12000;
-    document.getElementById('priceVal').textContent = '₹12,000';
-    renderProducts();
   }
 
   function toggleWish(sku, btn) {
@@ -596,62 +394,9 @@
     ELEVEN.showToast(nowInWish ? 'Added to wishlist' : 'Removed from wishlist');
   }
 
-  // Wire checkboxes
-  document.querySelectorAll('.filter-body .checkbox-row').forEach(row => {
-    const input = row.querySelector('input');
-    const rawLabel = row.textContent.trim();
-    const label = rawLabel.replace(/\d+$/, '').trim();
-    const catLabels = ['Running','Casual','Slides','Limited edition'];
-    const genderLabels = ['Men','Women','Unisex'];
-    const availLabels = ['In stock','New arrival','Best seller','On sale'];
-    input.checked = false;
-    input.addEventListener('change', () => {
-      if(catLabels.includes(label)) {
-        if(input.checked) activeFilters.cats.push(label); else activeFilters.cats = activeFilters.cats.filter(x=>x!==label);
-      } else if(genderLabels.includes(label)) {
-        if(input.checked) activeFilters.gender.push(label); else activeFilters.gender = activeFilters.gender.filter(x=>x!==label);
-      } else if(availLabels.includes(label)) {
-        if(input.checked) activeFilters.avail.push(label); else activeFilters.avail = activeFilters.avail.filter(x=>x!==label);
-      }
-      renderProducts();
-    });
-  });
-
-  // Wire size buttons
-  document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.classList.remove('selected');
-    btn.addEventListener('click', () => {
-      const s = parseInt(btn.textContent);
-      if(activeFilters.sizes.includes(s)) { activeFilters.sizes = activeFilters.sizes.filter(x=>x!==s); btn.classList.remove('selected'); }
-      else { activeFilters.sizes.push(s); btn.classList.add('selected'); }
-      renderProducts();
-    });
-  });
-
-  // Wire price range
-  document.getElementById('priceRange').addEventListener('input', function(){
-    activeFilters.maxPrice = parseInt(this.value);
-    document.getElementById('priceVal').textContent = '₹' + parseInt(this.value).toLocaleString('en-IN');
-    renderProducts();
-  });
-
-  // Wire sort
   document.getElementById('sortSelect').addEventListener('change', renderProducts);
 
-  // Wire clear
-  document.querySelector('.clear-filters').addEventListener('click', clearAllFilters);
-
-  // Wire color dots (visual only — no color data on products yet)
-  document.querySelectorAll('.color-dot').forEach(dot => {
-    dot.addEventListener('click', () => {
-      document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
-      dot.classList.add('selected');
-    });
-  });
-
-  // Initial render
   renderProducts();
-
 </script>
 
 <script>
@@ -758,28 +503,6 @@
   });
 })();
 
-</script>
-<script>
-/* ===== RENDER REAL PRODUCTS GRID ===== */
-(function(){
-  var grid = document.getElementById('realProductsGrid');
-  if(!grid || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
-  var REAL_CATALOG = (typeof getElevenCatalog === 'function') ? getElevenCatalog() : ELEVEN_REAL_PRODUCTS;
-  grid.innerHTML = REAL_CATALOG.map(function(p){
-    var inWish = ELEVEN.isWished(p.sku);
-    return '<div class="product-card sr" style="cursor:pointer;" onclick="window.location.href=\'product.html?sku='+p.sku+'\'">'
-      + '<div class="card-art">'
-      + (p.isNew ? '<span class="badge">New</span>' : (p.onSale ? '<span class="badge" style="background:var(--blue);">Sale</span>' : ''))
-      + '<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">'
-      + '</div>'
-      + '<div class="card-body" style="padding:14px 14px 16px;">'
-      + '<div class="brand-tag">'+p.brand+'</div>'
-      + '<h4 style="font-size:14px; font-weight:600; margin:2px 0 8px;">'+p.name+'</h4>'
-      + '<div class="card-price-row" style="display:flex; justify-content:space-between; align-items:center;">'
-      + '<span class="card-price">'+elevenFmtPrice(p.price)+(p.strike ? ' <span style="text-decoration:line-through;color:var(--steel-dim);font-size:11px;">'+elevenFmtPrice(p.strike)+'</span>' : '')+'</span>'
-      + '</div></div></div>';
-  }).join('');
-})();
 </script>
 </body>
 </html>
