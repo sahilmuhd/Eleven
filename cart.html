@@ -145,8 +145,10 @@
   .related-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
   .product-card{ transform-style:preserve-3d; will-change:transform; background:var(--charcoal); border:1px solid var(--line); cursor:pointer; transition:border-color .3s;}
   .product-card:hover{border-color:var(--steel-dim);}
-  .card-art{height:200px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center;}
+  .card-art{height:200px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; overflow:hidden;}
   .card-art svg{width:65%;}
+  .card-art img{width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art img{transform:scale(1.06);}
   .card-body{padding:14px 14px 16px;}
   .card-body .mono{font-size:10px; color:var(--steel-dim);}
   .card-body h4{font-size:14px; font-weight:600; margin:5px 0 8px;}
@@ -372,6 +374,15 @@
     return 2;
   }
 
+  function getCatalog(){
+    return (typeof getElevenCatalog === 'function') ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []);
+  }
+  function getItemImage(sku){
+    const catalog = getCatalog();
+    const p = catalog.find(x => x.sku === sku);
+    return (p && p.images && p.images[0]) ? p.images[0] : null;
+  }
+
   function renderCart(){
     const cart = ELEVEN.getCart();
     const container = document.getElementById('cartItems');
@@ -390,8 +401,8 @@
       if(checkoutBtn) checkoutBtn.style.pointerEvents = '';
       container.innerHTML = cart.map((item, i) => `
         <div class="cart-item">
-          <div class="item-art" onclick="window.location.href='product.html'" style="cursor:pointer;">
-            <svg viewBox="0 0 300 180">${shoeShapes[getShape(item.sku)]}</svg>
+          <div class="item-art" onclick="window.location.href='product.html?sku=${item.sku}'" style="cursor:pointer; overflow:hidden;">
+            ${getItemImage(item.sku) ? `<img src="${getItemImage(item.sku)}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;display:block;">` : `<svg viewBox="0 0 300 180">${shoeShapes[getShape(item.sku)]}</svg>`}
           </div>
           <div class="item-info">
             <span class="mono">ELV-${item.sku}</span>
@@ -467,15 +478,15 @@
   }
   renderCart();
 
-  // Related products
-  const relatedNames = ['Apex Trainer','Sector One','Glide Pro','Off-Court Low'];
-  const relatedSkus = ['RN-012','CS-009','RN-018','CS-014'];
-  const relatedPrices = [7299,4599,6899,4999];
+  // Related products — pulled from the real catalog, excluding items already in cart
+  const cartSkus = ELEVEN.getCart().map(it => it.sku);
   const relatedGrid = document.getElementById('relatedGrid');
-  relatedNames.forEach((n,i)=>{
+  const relatedItems = getCatalog().filter(p => !cartSkus.includes(p.sku)).slice(0, 4);
+  relatedItems.forEach((p)=>{
     const div = document.createElement('div');
-    div.className='product-card'; div.onclick=()=>window.location.href='product.html'; div.style.cursor='pointer';
-    div.innerHTML=`<div class="card-art"><svg viewBox="0 0 300 180">${shoeShapes[getShape(relatedSkus[i])]}</svg></div><div class="card-body"><span class="mono">ELV-${relatedSkus[i]}</span><h4>${n}</h4><span class="card-price">${ELEVEN.fmt(relatedPrices[i])}</span></div>`;
+    div.className='product-card'; div.onclick=()=>window.location.href='product.html?sku='+p.sku; div.style.cursor='pointer';
+    const img = (p.images && p.images[0]) ? p.images[0] : '';
+    div.innerHTML=`<div class="card-art" style="overflow:hidden;">${img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` : `<svg viewBox="0 0 300 180">${shoeShapes[getShape(p.sku)]}</svg>`}</div><div class="card-body"><span class="mono">ELV-${p.sku}</span><h4>${p.name}</h4><span class="card-price">${ELEVEN.fmt(p.price)}</span></div>`;
     relatedGrid.appendChild(div);
   });
 </script>

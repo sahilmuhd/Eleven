@@ -200,6 +200,27 @@
   .tile-label .mono{font-size:11px; color:var(--gold); letter-spacing:0.08em; display:block; margin-bottom:6px;}
   .tile-label h3{font-family:'Bebas Neue',sans-serif; font-size:28px;}
 
+  /* ----- Highlighted / best-performing tiles ----- */
+  .collection-tile.is-featured{
+    box-shadow:inset 0 0 0 2px var(--gold), 0 0 28px rgba(201,163,104,0.28);
+  }
+  .collection-tile.is-featured::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(201,163,104,0.10), transparent 45%);
+    z-index:1; pointer-events:none;
+  }
+  .featured-flag{
+    position:absolute; top:16px; right:16px; z-index:3;
+    display:flex; align-items:center; gap:5px;
+    background:var(--gold); color:var(--ink);
+    font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600;
+    letter-spacing:0.06em; text-transform:uppercase;
+    padding:6px 10px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  }
+  .featured-flag svg{width:11px; height:11px;}
+
   /* ===== NEW ARRIVALS — horizontal scroll rail ===== */
   .rail-wrap{position:relative;}
   .rail-scroll{
@@ -505,7 +526,8 @@
   </div>
 
   <div class="collections-grid">
-    <a class="collection-tile" href="product.html?sku=AJ4-THDR-BY" style="text-decoration:none; color:inherit;">
+    <a class="collection-tile is-featured" href="product.html?sku=AJ4-THDR-BY" style="text-decoration:none; color:inherit;">
+      <div class="featured-flag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6L12 2z"/></svg>Bestseller</div>
       <div class="placeholder-art">
         <img src="images/products/aj4-thunder/1.jpeg" alt="Air Jordan 4 Thunder" style="width:100%;height:100%;object-fit:cover;">
       </div>
@@ -516,7 +538,7 @@
     </a>
     <a class="collection-tile" href="product.html?sku=NB-9060-NRG" style="text-decoration:none; color:inherit;">
       <div class="placeholder-art">
-        <img src="images/products/nb-9060-nori/1.jpeg" alt="New Balance 9060" style="width:100%;height:100%;object-fit:contain;">
+        <img src="images/products/nb-9060-nori/1.jpeg" alt="New Balance 9060" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
         <span class="mono">N°02 — NB</span>
@@ -532,9 +554,10 @@
         <h3>Classics</h3>
       </div>
     </a>
-    <a class="collection-tile tile-wide" href="product.html?sku=SBD-STU-001" style="text-decoration:none; color:inherit;">
+    <a class="collection-tile tile-wide is-featured" href="product.html?sku=SBD-STU-001" style="text-decoration:none; color:inherit;">
+      <div class="featured-flag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6L12 2z"/></svg>Editor's Pick</div>
       <div class="placeholder-art">
-        <img src="images/products/sb-dunk-stussy/1.jpeg" alt="Nike SB Dunk x Stussy" style="width:100%;height:100%;object-fit:contain;">
+        <img src="images/products/sb-dunk-stussy/1.jpeg" alt="Nike SB Dunk x Stussy" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="tile-label">
         <span class="mono">N°04 — LIMITED</span>

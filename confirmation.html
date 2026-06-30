@@ -371,10 +371,14 @@
 
     // Render items
     var itemsEl = document.getElementById('orderItems');
+    var catalog = (typeof getElevenCatalog === 'function') ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []);
+    function imgFor(sku){ var p = catalog.find(function(x){ return x.sku === sku; }); return (p && p.images && p.images[0]) ? p.images[0] : null; }
     if(itemsEl && snapshot && snapshot.length){
       itemsEl.innerHTML = snapshot.map(function(it){
-        return '<div style="display:flex;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line);font-size:13px;">'
-          + '<span><strong>'+it.name+'</strong> &middot; '+it.size+' &times;'+it.qty+'</span>'
+        var img = imgFor(it.sku);
+        return '<div style="display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:13px;">'
+          + '<div class="item-art" style="overflow:hidden;">' + (img ? '<img src="'+img+'" alt="'+it.name+'" style="width:100%;height:100%;object-fit:cover;display:block;">' : '') + '</div>'
+          + '<span style="flex:1;display:flex;justify-content:space-between;"><strong>'+it.name+'</strong> &middot; '+it.size+' &times;'+it.qty+'</span>'
           + '</div>';
       }).join('');
     }

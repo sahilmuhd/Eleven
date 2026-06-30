@@ -191,6 +191,8 @@ const shoeShapes = [
   '<path d="M70 110 Q150 60 230 110 L215 145 Q150 108 85 145 Z" fill="#2a2a2c" stroke="#4a4a4d" stroke-width="1.5"/>'
 ];
 function getShape(sku){if(sku.startsWith('RN'))return 0;if(sku.startsWith('CS'))return 1;if(sku.startsWith('SL'))return 3;return 2;}
+function getCatalog(){return (typeof getElevenCatalog === 'function') ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []);}
+function getItemImage(sku){const p = getCatalog().find(x => x.sku === sku); return (p && p.images && p.images[0]) ? p.images[0] : null;}
 
 function render() {
   const cart = ELEVEN.getCart();
@@ -213,7 +215,7 @@ function render() {
 
   itemsEl.innerHTML = cart.map(it => `
     <div class="summary-item">
-      <div class="item-art"><svg viewBox="0 0 300 180">${shoeShapes[getShape(it.sku)]}</svg></div>
+      <div class="item-art" style="overflow:hidden;">${getItemImage(it.sku) ? `<img src="${getItemImage(it.sku)}" alt="${it.name}" style="width:100%;height:100%;object-fit:cover;display:block;">` : `<svg viewBox="0 0 300 180">${shoeShapes[getShape(it.sku)]}</svg>`}</div>
       <div class="item-info">
         <h5>${it.name}</h5>
         <span>${it.size} · Qty ${it.qty}</span>
