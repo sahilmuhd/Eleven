@@ -166,8 +166,23 @@
     opacity:1;
     transform:translateY(0);
   }
+  /* ===== SMOOTH MOBILE MENU ANIMATION ===== */
+  .mobile-menu{
+    visibility:hidden !important;
+    opacity:0 !important;
+    transform:translateY(-10px) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), visibility 0s .3s !important;
+    display:flex !important;
+  }
+  .mobile-menu.open{
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:translateY(0) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
+  }
 </style>
 <script src="eleven-cart.js"></script>
+<script src="eleven-real-products.js"></script>
 </head>
 <body>
 
@@ -269,7 +284,9 @@ const allProducts = [
   { name:'Loop Mid',       sku:'CS-017', price:4799,  shape:1, cats:['Casual'],   sizes:[9,10,11],    isNew:false, onSale:false },
   { name:'Vault Slide',    sku:'SL-008', price:2499,  shape:3, cats:['Slides'],   sizes:[6,7,8],      isNew:false, onSale:false },
   { name:'Stratus Trainer',sku:'RN-023', price:7499,  shape:2, cats:['Running','Limited edition'], sizes:[8,9,10,11], isNew:true, onSale:false },
-];
+].concat((typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : []).map(function(p){
+  return { name:p.name, sku:p.sku, price:p.price, shape:0, cats:p.cats, sizes:p.sizes, isNew:p.isNew, onSale:p.onSale, real:true, image:p.images[0], brand:p.brand };
+}));
 
 const input = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearSearch');
@@ -280,7 +297,7 @@ const meta = document.getElementById('resultsMeta');
 
 function matchesQuery(p, q){
   if(q === '') return true;
-  const hay = `${p.name} ${p.sku} ${p.cats.join(' ')}`.toLowerCase();
+  const hay = `${p.name} ${p.sku} ${p.cats.join(' ')} ${p.brand||''}`.toLowerCase();
   if(q === 'sale') return p.onSale;
   return hay.includes(q.toLowerCase());
 }
@@ -317,14 +334,18 @@ function renderGrid(items){
   grid.innerHTML = items.map(p => {
     const inWish = ELEVEN.isWished(p.sku);
     const salePrice = p.onSale ? Math.round(p.price * 0.85) : p.price;
+    const detailUrl = p.real ? `product.html?sku=${p.sku}` : 'product.html';
+    const artInner = p.real
+      ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" alt="${p.name}">`
+      : `<svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>`;
     return `
-    <div class="product-card" onclick="window.location.href='product.html'">
-      <div class="card-art">
+    <div class="product-card" onclick="window.location.href='${detailUrl}'">
+      <div class="card-art" style="overflow:hidden;">
         ${p.isNew ? '<span class="badge">New</span>' : p.onSale ? '<span class="badge sale">-15%</span>' : ''}
         <button class="card-wishlist ${inWish?'wishlisted':''}" aria-label="${inWish?'Remove from wishlist':'Add to wishlist'}" onclick="event.stopPropagation(); toggleWish('${p.sku}', this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="${inWish?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <svg viewBox="0 0 300 180">${shoeShapes[p.shape]}</svg>
+        ${artInner}
       </div>
       <div class="card-body">
         <span class="mono">ELV-${p.sku}</span>

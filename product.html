@@ -66,6 +66,8 @@
   }
   .gallery-main svg{width:62%; transition:transform .2s ease;}
   .gallery-main.zoomed svg{transform:scale(1.9);}
+  .gallery-main img{transition:transform .3s ease;}
+  .gallery-main.zoomed img{transform:scale(1.5);}
   .gallery-main.zoomed{cursor:zoom-out;}
   .zoom-hint{
     position:absolute; bottom:16px; right:16px;
@@ -259,8 +261,23 @@
     opacity:1;
     transform:translateY(0);
   }
+  /* ===== SMOOTH MOBILE MENU ANIMATION ===== */
+  .mobile-menu{
+    visibility:hidden !important;
+    opacity:0 !important;
+    transform:translateY(-10px) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), visibility 0s .3s !important;
+    display:flex !important;
+  }
+  .mobile-menu.open{
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:translateY(0) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
+  }
 </style>
 <script src="eleven-cart.js"></script>
+<script src="eleven-real-products.js"></script>
 </head>
 <body>
 
@@ -567,6 +584,186 @@
   window.addEventListener('scroll', () => {
     stickyBar.classList.toggle('show', window.scrollY > 600);
   });
+</script>
+
+<script>
+/* ===== REAL PRODUCT OVERRIDE — runs if ?sku= matches a real product ===== */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var sku = params.get('sku');
+  if(!sku || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
+  var p = ELEVEN_REAL_PRODUCTS.find(function(x){ return x.sku === sku; });
+  if(!p) return;
+
+  // ---- Title, breadcrumb, SKU ----
+  document.title = p.name + ' — ELEVEN';
+  var crumb = document.querySelector('.breadcrumb');
+  if(crumb) crumb.innerHTML = '<a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="shop.html">'+ (p.cats[0]||'Shop') +'</a> / <span>'+ p.name +'</span>';
+  var skuEl = document.querySelector('.product-info .sku');
+  if(skuEl) skuEl.textContent = 'ELV-' + p.sku;
+  var h1 = document.querySelector('.product-info h1');
+  if(h1) h1.textContent = p.name;
+
+  // ---- Brand tag (insert under h1 if not present) ----
+  if(h1 && !document.getElementById('brandTag')){
+    var bt = document.createElement('div');
+    bt.id = 'brandTag';
+    bt.style.cssText = 'font-size:12px; color:var(--gold); letter-spacing:0.06em; text-transform:uppercase; margin:-4px 0 10px; font-weight:600;';
+    bt.textContent = p.brand + ' · ' + p.colorway;
+    h1.after(bt);
+  }
+
+  // ---- Price ----
+  var priceNow = document.querySelector('.price-now');
+  var priceStrike = document.querySelector('.price-strike');
+  var priceSave = document.querySelector('.price-save');
+  if(priceNow) priceNow.textContent = elevenFmtPrice(p.price);
+  if(p.strike && p.strike > p.price){
+    if(priceStrike){ priceStrike.textContent = elevenFmtPrice(p.strike); priceStrike.style.display=''; }
+    if(priceSave){ priceSave.textContent = 'Save ' + Math.round((1-p.price/p.strike)*100) + '%'; priceSave.style.display=''; }
+  } else {
+    if(priceStrike) priceStrike.style.display = 'none';
+    if(priceSave) priceSave.style.display = 'none';
+  }
+
+  // ---- Gallery: replace SVG render with real photos ----
+  var galleryMain = document.getElementById('galleryMain');
+  var thumbRow = document.getElementById('thumbRow');
+  var badge = galleryMain ? galleryMain.querySelector('.gallery-badge') : null;
+  if(badge){ badge.style.display = p.isNew ? '' : 'none'; if(p.isNew) badge.textContent = 'New'; }
+
+  var imgIdx = 0;
+  function renderRealMain(){
+    var mainSvg = document.getElementById('mainSvg');
+    if(mainSvg) mainSvg.style.display = 'none';
+    var existingImg = document.getElementById('mainPhoto');
+    if(!existingImg){
+      existingImg = document.createElement('img');
+      existingImg.id = 'mainPhoto';
+      existingImg.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
+      galleryMain.insertBefore(existingImg, galleryMain.querySelector('.gallery-nav-btn.next'));
+    }
+    existingImg.src = p.images[imgIdx];
+    existingImg.alt = p.name + ' — angle ' + (imgIdx+1);
+  }
+  function renderRealThumbs(){
+    thumbRow.innerHTML = p.images.map(function(src, i){
+      return '<div class="thumb '+(i===imgIdx?'active':'')+'" onclick="window.__elevenSetRealImage('+i+')">'
+        + '<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;display:block;" alt="'+p.name+' thumbnail '+(i+1)+'">'
+        + '</div>';
+    }).join('');
+  }
+  window.__elevenSetRealImage = function(i){
+    imgIdx = i;
+    renderRealMain();
+    renderRealThumbs();
+    galleryMain.classList.remove('zoomed');
+  };
+  // Override prev/next buttons
+  var prevBtn = galleryMain.querySelector('.gallery-nav-btn.prev');
+  var nextBtn = galleryMain.querySelector('.gallery-nav-btn.next');
+  if(prevBtn) prevBtn.onclick = function(e){ e.stopPropagation(); window.__elevenSetRealImage((imgIdx-1+p.images.length)%p.images.length); };
+  if(nextBtn) nextBtn.onclick = function(e){ e.stopPropagation(); window.__elevenSetRealImage((imgIdx+1)%p.images.length); };
+  renderRealMain();
+  renderRealThumbs();
+
+  // ---- Hide color swatches (real products have one true colorway) ----
+  var selectorBlocks = document.querySelectorAll('.selector-block');
+  if(selectorBlocks[0]) selectorBlocks[0].style.display = 'none';
+
+  // ---- Sizes ----
+  var sizeGrid = document.querySelector('.size-grid-pdp');
+  if(sizeGrid){
+    sizeGrid.innerHTML = p.sizes.map(function(s, i){
+      return '<button class="size-btn-pdp'+(i===0?' selected':'')+'">'+s+'</button>';
+    }).join('');
+    var newBtns = sizeGrid.querySelectorAll('.size-btn-pdp');
+    var realSelectedSize = 'UK ' + p.sizes[0];
+    newBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        newBtns.forEach(function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        realSelectedSize = 'UK ' + btn.textContent.trim();
+        var se = document.getElementById('sizeError');
+        if(se) se.style.display = 'none';
+        var ss = document.getElementById('stickySize');
+        if(ss) ss.textContent = p.name + ' · ' + realSelectedSize;
+      });
+    });
+
+    // ---- Override add to cart / buy now / wishlist for this real product ----
+    function realAddToCart(){
+      var qtyEl = document.getElementById('qty');
+      var qty = parseInt(qtyEl ? qtyEl.textContent : '1') || 1;
+      ELEVEN.addToCart({ sku: p.sku, name: p.name, size: realSelectedSize, color: p.colorway, price: p.price, shape: 0, image: p.images[0] });
+      if(qty > 1){
+        var cart = ELEVEN.getCart();
+        var idx = cart.findIndex(function(i){ return i.sku === p.sku && i.size === realSelectedSize; });
+        if(idx >= 0){ cart[idx].qty = qty; ELEVEN.saveCart(cart); }
+      }
+      ELEVEN.showToast(p.name + ' added to cart');
+      ELEVEN.updateAllBadges();
+    }
+    var addBtn = document.querySelector('.btn-add-cart');
+    var buyBtn = document.querySelector('.btn-buy-now');
+    var stickyAddBtn = document.querySelector('.sticky-bar .btn-add-cart');
+    if(addBtn) addBtn.onclick = realAddToCart;
+    if(stickyAddBtn) stickyAddBtn.onclick = realAddToCart;
+    if(buyBtn) buyBtn.onclick = function(){ realAddToCart(); window.location.href = 'checkout.html'; };
+
+    // ---- Wishlist override ----
+    var wishBtn = document.querySelector('.icon-row button');
+    function updateRealWishBtn(){
+      var inWish = ELEVEN.isWished(p.sku);
+      wishBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+(inWish?'currentColor':'none')+'" stroke="currentColor" stroke-width="2" style="color:'+(inWish?'var(--gold)':'currentColor')+'"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> ' + (inWish ? 'Saved' : 'Wishlist');
+    }
+    if(wishBtn){
+      var freshWishBtn = wishBtn.cloneNode(true);
+      wishBtn.replaceWith(freshWishBtn);
+      wishBtn = freshWishBtn;
+      wishBtn.addEventListener('click', function(){
+        ELEVEN.toggleWish(p.sku);
+        updateRealWishBtn();
+        ELEVEN.showToast(ELEVEN.isWished(p.sku) ? 'Added to wishlist' : 'Removed from wishlist');
+      });
+      updateRealWishBtn();
+    }
+
+    // ---- Sticky bar product name/photo ----
+    var stickyBarLeft = document.querySelector('.sticky-bar-left');
+    if(stickyBarLeft){
+      stickyBarLeft.innerHTML = '<img src="'+p.images[0]+'" style="width:34px;height:34px;object-fit:cover;border-radius:4px;">'
+        + '<div><h6>'+p.name+'</h6><span class="mono" id="stickySize">'+p.name+' · UK '+p.sizes[0]+'</span></div>';
+    }
+  }
+
+  // ---- Description accordion ----
+  var descBody = document.querySelector('.accordion-item .accordion-body');
+  if(descBody) descBody.textContent = p.desc;
+  var materialBody = document.querySelectorAll('.accordion-item .accordion-body')[1];
+  if(materialBody) materialBody.textContent = 'Authentic ' + p.brand + ' product. ' + p.colorway + ' colorway. Comes with original box and accessories where available.';
+
+  // ---- Related products: show other real products ----
+  function buildRealCard(prod){
+    var div = document.createElement('div');
+    div.className = 'product-card';
+    div.style.cursor = 'pointer';
+    div.onclick = function(){ window.location.href = 'product.html?sku=' + prod.sku; };
+    div.innerHTML = '<div class="card-art" style="overflow:hidden;"><img src="'+prod.images[0]+'" style="width:100%;height:100%;object-fit:cover;"></div>'
+      + '<div class="card-body"><span class="mono">ELV-'+prod.sku+'</span><h4>'+prod.name+'</h4><span class="card-price">'+elevenFmtPrice(prod.price)+'</span></div>';
+    return div;
+  }
+  var relatedGrid = document.getElementById('relatedGrid');
+  var recentGrid = document.getElementById('recentGrid');
+  if(relatedGrid){
+    relatedGrid.innerHTML = '';
+    ELEVEN_REAL_PRODUCTS.filter(function(x){ return x.sku !== p.sku; }).slice(0,4).forEach(function(prod){ relatedGrid.appendChild(buildRealCard(prod)); });
+  }
+  if(recentGrid){
+    recentGrid.innerHTML = '';
+    ELEVEN_REAL_PRODUCTS.filter(function(x){ return x.sku !== p.sku; }).slice(4,8).forEach(function(prod){ recentGrid.appendChild(buildRealCard(prod)); });
+  }
+})();
 </script>
 
 <script>

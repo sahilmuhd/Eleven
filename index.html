@@ -233,6 +233,9 @@
   }
   .card-art svg{width:70%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
   .product-card:hover .card-art svg{transform:translateY(-6px) scale(1.04);}
+  .card-art img{width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art img{transform:translateY(-6px) scale(1.06);}
+  .brand-tag{font-size:10px; color:var(--gold); letter-spacing:0.05em; text-transform:uppercase; font-weight:600; margin-bottom:2px;}
   .badge{
     position:absolute; top:14px; left:14px;
     font-family:'JetBrains Mono',monospace;
@@ -380,8 +383,23 @@
     transform-style: preserve-3d;
     will-change: transform;
   }
+  /* ===== SMOOTH MOBILE MENU ANIMATION ===== */
+  .mobile-menu{
+    visibility:hidden !important;
+    opacity:0 !important;
+    transform:translateY(-10px) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), visibility 0s .3s !important;
+    display:flex !important;
+  }
+  .mobile-menu.open{
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:translateY(0) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
+  }
 </style>
 <script src="eleven-cart.js"></script>
+<script src="eleven-real-products.js"></script>
 </head>
 <body>
 
@@ -504,6 +522,18 @@
   </div>
 </section>
 
+<section id="authentic-drops">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Verified stock</div>
+      <h2 class="section-title">Authentic drops</h2>
+    </div>
+    <div class="section-count mono"><a href="shop.html" style="color:var(--steel-dim); text-decoration:none;">9 pairs in stock →</a></div>
+  </div>
+
+  <div class="rail-scroll" id="realRail"></div>
+</section>
+
 <section id="new">
   <div class="section-head">
     <div>
@@ -615,10 +645,10 @@
       <h2 class="display">N°11 — THE ARCHIVE PACK</h2>
       <p style="color:var(--steel-dim); font-size:14px; margin-bottom:8px;">300 pairs. One release. Gone when they're gone.</p>
       <div class="countdown">
-        <div><div class="num">02</div><div class="lbl">Days</div></div>
-        <div><div class="num">14</div><div class="lbl">Hours</div></div>
-        <div><div class="num">37</div><div class="lbl">Mins</div></div>
-        <div><div class="num">00</div><div class="lbl">Secs</div></div>
+        <div><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
+        <div><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
+        <div><div class="num" id="cd-mins">--</div><div class="lbl">Mins</div></div>
+        <div><div class="num" id="cd-secs">--</div><div class="lbl">Secs</div></div>
       </div>
       <div id="notifyForm" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:4px;">
         <input id="notifyEmail" type="email" placeholder="your@email.com"
@@ -899,6 +929,51 @@ function submitNotify(){
   document.getElementById('notifyForm').style.display = 'none';
   document.getElementById('notifySuccess').style.display = 'block';
 }
+</script>
+<script>
+/* LIVE COUNTDOWN — N°11 Archive Pack drop */
+(function(){
+  // Drop date: July 15 2026 at 10:00 AM IST (UTC+5:30)
+  var DROP = new Date('2026-07-15T10:00:00+05:30').getTime();
+  var days  = document.getElementById('cd-days');
+  var hours = document.getElementById('cd-hours');
+  var mins  = document.getElementById('cd-mins');
+  var secs  = document.getElementById('cd-secs');
+  if(!days) return;
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function tick(){
+    var diff = DROP - Date.now();
+    if(diff <= 0){
+      days.textContent = hours.textContent = mins.textContent = secs.textContent = '00';
+      return;
+    }
+    days.textContent  = pad(Math.floor(diff / 86400000));
+    hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+    mins.textContent  = pad(Math.floor((diff % 3600000)  / 60000));
+    secs.textContent  = pad(Math.floor((diff % 60000)    / 1000));
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+<script>
+/* ===== RENDER AUTHENTIC DROPS RAIL ===== */
+(function(){
+  var rail = document.getElementById('realRail');
+  if(!rail || typeof ELEVEN_REAL_PRODUCTS === 'undefined') return;
+  rail.innerHTML = ELEVEN_REAL_PRODUCTS.map(function(p){
+    return '<div class="product-card" style="cursor:pointer;" onclick="window.location.href=\'product.html?sku='+p.sku+'\'">'
+      + '<div class="card-art">'
+      + (p.isNew ? '<span class="badge">New</span>' : (p.onSale ? '<span class="badge" style="background:var(--blue);">Sale</span>' : ''))
+      + '<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">'
+      + '</div>'
+      + '<div class="card-body">'
+      + '<div class="brand-tag">'+p.brand+'</div>'
+      + '<h4>'+p.name+'</h4>'
+      + '<div class="card-price-row"><span class="card-price">'+elevenFmtPrice(p.price)+'</span></div>'
+      + '</div></div>';
+  }).join('');
+})();
 </script>
 </body>
 </html>

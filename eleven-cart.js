@@ -115,3 +115,17 @@ function toggleMenu(){
   menu.classList.toggle('open');
   document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
 }
+
+/* Close mobile menu when any link inside it is clicked */
+document.addEventListener('DOMContentLoaded', function(){
+  const menu = document.getElementById('mobileMenu');
+  if(!menu) return;
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      const btn = document.getElementById('hamburger');
+      if(btn) btn.classList.remove('open');
+      menu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+});

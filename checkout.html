@@ -115,6 +115,7 @@
   }
 </style>
 <script src="eleven-cart.js"></script>
+<script src="eleven-real-products.js"></script>
 </head>
 <body>
 
@@ -272,9 +273,13 @@ function orderOnWhatsApp() {
   );
   const msg = msgLines.join('\n');
 
-  // Save for confirmation page
-  localStorage.setItem('eleven_order_id', orderId);
-  localStorage.setItem('eleven_order_total', ELEVEN.fmt(total));
+  // Save full snapshot for confirmation page
+  localStorage.setItem('eleven_order_id',       orderId);
+  localStorage.setItem('eleven_order_snapshot', JSON.stringify(cart));
+  localStorage.setItem('eleven_order_subtotal', subtotal);
+  localStorage.setItem('eleven_order_discount', discount);
+  localStorage.setItem('eleven_order_total_raw', total);
+  localStorage.setItem('eleven_order_coupon',   code || '');
   ELEVEN.clearCart(); // also clears any applied discount/coupon
 
   const waNumber = '917560943996';

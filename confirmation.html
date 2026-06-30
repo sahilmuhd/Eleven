@@ -199,8 +199,23 @@
     opacity:1;
     transform:translateY(0);
   }
+  /* ===== SMOOTH MOBILE MENU ANIMATION ===== */
+  .mobile-menu{
+    visibility:hidden !important;
+    opacity:0 !important;
+    transform:translateY(-10px) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), visibility 0s .3s !important;
+    display:flex !important;
+  }
+  .mobile-menu.open{
+    visibility:visible !important;
+    opacity:1 !important;
+    transform:translateY(0) !important;
+    transition:opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1) !important;
+  }
 </style>
 <script src="eleven-cart.js"></script>
+<script src="eleven-real-products.js"></script>
 </head>
 <body>
 
@@ -302,10 +317,7 @@
     <h4>Items in this order</h4>
     <div id="orderItems"></div>
     <div style="padding:18px 24px;">
-      <div class="totals-row"><span>Subtotal</span><span class="mono">₹13,997</span></div>
-      <div class="totals-row"><span>Discount (BUILT10)</span><span class="mono" style="color:var(--gold);">−₹1,400</span></div>
-      <div class="totals-row"><span>Shipping</span><span class="mono">Free</span></div>
-      <div class="totals-row total"><span>Total paid</span><span class="mono">₹12,597</span></div>
+      <div id="conf-totals"></div>
     </div>
   </div>
 
@@ -342,15 +354,42 @@
 
 <script>
   // Populate confirmation from saved order data
-  const orderId = localStorage.getItem('eleven_order_id') || 'ELV-2026-' + Math.floor(10000+Math.random()*90000);
-  const email = localStorage.getItem('eleven_order_email') || '';
-  const total = localStorage.getItem('eleven_order_total') || '';
-  document.querySelectorAll('.mono').forEach(el => {
-    if(el.textContent.includes('ELV-2026')) el.textContent = orderId;
-  });
-  if(email) document.querySelectorAll('p').forEach(el => {
-    if(el.textContent.includes('name@email.com') || el.textContent.includes('@email')) el.innerHTML = el.innerHTML.replace(/[\w.+-]+@[\w.]+/g, email);
-  });
+  (function(){
+    var orderId  = localStorage.getItem('eleven_order_id')    || ('ELV-' + Math.floor(10000+Math.random()*90000));
+    var snapshot = JSON.parse(localStorage.getItem('eleven_order_snapshot') || 'null');
+    var subtotal = Number(localStorage.getItem('eleven_order_subtotal') || 0);
+    var discount = Number(localStorage.getItem('eleven_order_discount') || 0);
+    var total    = Number(localStorage.getItem('eleven_order_total_raw') || 0);
+    var coupon   = localStorage.getItem('eleven_order_coupon') || '';
+
+    // Update order number display
+    document.querySelectorAll('.mono, .val').forEach(function(el){
+      if(el.textContent.includes('ELV-')) el.textContent = orderId;
+    });
+
+    // Render items
+    var itemsEl = document.getElementById('orderItems');
+    if(itemsEl && snapshot && snapshot.length){
+      itemsEl.innerHTML = snapshot.map(function(it){
+        return '<div style="display:flex;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line);font-size:13px;">'
+          + '<span><strong>'+it.name+'</strong> &middot; '+it.size+' &times;'+it.qty+'</span>'
+          + '<span class="mono">&#x20B9;'+Math.round(it.price*it.qty).toLocaleString('en-IN')+'</span>'
+          + '</div>';
+      }).join('');
+    }
+
+    // Render totals
+    var totalsEl = document.getElementById('conf-totals');
+    if(totalsEl){
+      var rows = '<div class="totals-row"><span>Subtotal</span><span class="mono">&#x20B9;'+Math.round(subtotal).toLocaleString('en-IN')+'</span></div>';
+      if(discount > 0){
+        rows += '<div class="totals-row"><span>Discount'+(coupon?' ('+coupon+')':'')+'</span><span class="mono" style="color:var(--gold);">&minus;&#x20B9;'+Math.round(discount).toLocaleString('en-IN')+'</span></div>';
+      }
+      rows += '<div class="totals-row"><span>Shipping</span><span class="mono">Free</span></div>';
+      rows += '<div class="totals-row total"><span>Total paid</span><span class="mono">&#x20B9;'+Math.round(total).toLocaleString('en-IN')+'</span></div>';
+      totalsEl.innerHTML = rows;
+    }
+  })();
 </script>
 
 <script>
