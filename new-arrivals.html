@@ -391,7 +391,7 @@
     </div>
     <div class="footer-col">
       <h5>Connect</h5>
-      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://instagram.com/elevenfootwear" target="_blank" rel="noopener">Instagram</a>
       <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
       <a href="mailto:sahilmuhd123@gmail.com">Email</a>
     </div>
@@ -446,9 +446,9 @@ document.addEventListener('DOMContentLoaded', () => {
   saleProducts.forEach(p => renderCard(p, saleGrid));
 });
 
-// Countdown
+// Countdown — Drop date: July 15 2026 at 10:00 AM IST (UTC+5:30), matches homepage
 (function(){
-  const target = new Date(Date.now() + (2*86400 + 14*3600 + 37*60)*1000);
+  const target = new Date('2026-07-15T10:00:00+05:30').getTime();
   function tick(){
     const diff = Math.max(0, target - Date.now());
     const d = Math.floor(diff/86400000);

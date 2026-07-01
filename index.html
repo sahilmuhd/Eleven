@@ -681,7 +681,7 @@
     </div>
     <div class="footer-col">
       <h5>Connect</h5>
-      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://instagram.com/elevenfootwear" target="_blank" rel="noopener">Instagram</a>
       <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
       <a href="mailto:sahilmuhd123@gmail.com">Email</a>
     </div>
@@ -864,9 +864,21 @@ function submitNotify(){
   // Store locally
   var list = JSON.parse(localStorage.getItem('eleven_notify') || '[]');
   if(!list.includes(val)) { list.push(val); localStorage.setItem('eleven_notify', JSON.stringify(list)); }
-  // Open WhatsApp with pre-filled message
-  var msg = encodeURIComponent('Hi ELEVEN! Please add me to the N°11 Archive Pack drop alert. My email: ' + val);
-  window.open('https://wa.me/917560943996?text=' + msg, '_blank');
+  // Notify via WhatsApp
+  var waMsg = encodeURIComponent('Hi ELEVEN! Please add me to the N°11 Archive Pack drop alert. My email: ' + val);
+  window.open('https://wa.me/917560943996?text=' + waMsg, '_blank');
+  // Automatically email the admin — no action needed from the customer
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: '93fa3bea-ce22-49cf-bcb0-378522dd162d',
+      subject: 'N°11 Archive Pack — drop alert signup',
+      from_name: 'ELEVEN website',
+      email: val,
+      message: 'New drop alert signup for the N°11 Archive Pack.\n\nCustomer email: ' + val
+    })
+  }).catch(function(err){ console.error('Notify email failed:', err); });
   document.getElementById('notifyForm').style.display = 'none';
   document.getElementById('notifySuccess').style.display = 'block';
 }
