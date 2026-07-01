@@ -693,25 +693,6 @@
 </footer>
 
 <script>
-// Countdown timer
-(function(){
-  const target = new Date(Date.now() + (2*86400 + 14*3600 + 37*60)*1000);
-  function tick(){
-    const diff = Math.max(0, target - Date.now());
-    const days = Math.floor(diff/86400000);
-    const hrs = Math.floor((diff%86400000)/3600000);
-    const mins = Math.floor((diff%3600000)/60000);
-    const secs = Math.floor((diff%60000)/1000);
-    const nums = document.querySelectorAll('.countdown .num');
-    if(nums.length>=3){nums[0].textContent=String(days).padStart(2,'0'); nums[1].textContent=String(hrs).padStart(2,'0'); nums[2].textContent=String(mins).padStart(2,'0');}
-    // Add seconds if element exists
-    if(nums[3]) nums[3].textContent=String(secs).padStart(2,'0');
-  }
-  tick();
-  setInterval(tick, 1000);
-})();
-</script>
-<script>
 (function(){
   var SELECTORS = '.product-card, .why-item, .collection-tile, .section-head, .about-stat, .contact-card, .faq-item, .drop-banner, .cd-item';
   var observed = new WeakSet();
