@@ -378,21 +378,26 @@
     justify-content:center;
     align-items:center;
     gap:0;
-    padding:96px 32px 40px;
-    overflow-y:auto;
+    padding:80px 40px 40px;
   }
   .mobile-menu.open{display:flex;}
   .mobile-menu a{
     display:block; width:100%;
     color:var(--chalk); text-decoration:none;
-    font-family:'Bebas Neue',sans-serif; font-size:clamp(20px,6vw,28px);
-    letter-spacing:0.03em; text-align:center;
-    padding:12px 0;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,10vw,56px);
+    letter-spacing:0.04em; text-align:center;
+    padding:14px 0;
     border-bottom:1px solid var(--line);
     transition:color .2s;
   }
   .mobile-menu a:first-child{border-top:1px solid var(--line);}
   .mobile-menu a:hover, .mobile-menu a.active{color:var(--gold);}
+  .mobile-menu-footer{
+    margin-top:32px; display:flex; gap:24px; align-items:center;
+    font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim);
+  }
+  .mobile-menu-footer a{color:var(--steel-dim); text-decoration:none;}
+  .mobile-menu-footer a:hover{color:var(--chalk);}
 
   @media(max-width:900px){
     .hamburger{display:flex;}
@@ -488,6 +493,13 @@
   <a href="contact.html" class="">Contact</a>
   <a href="search.html">Search</a>
   <a href="wishlist.html">Wishlist</a>
+  <div class="mobile-menu-footer">
+    <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
+    <span>·</span>
+    <a href="mailto:sahilmuhd123@gmail.com">Email</a>
+    <span>·</span>
+    <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+  </div>
 </div>
 
 <header class="hero">
@@ -681,7 +693,7 @@
     </div>
     <div class="footer-col">
       <h5>Connect</h5>
-      <a href="https://instagram.com/elevenfootwear" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
       <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
       <a href="mailto:sahilmuhd123@gmail.com">Email</a>
     </div>
@@ -692,6 +704,25 @@
   </div>
 </footer>
 
+<script>
+// Countdown timer
+(function(){
+  const target = new Date(Date.now() + (2*86400 + 14*3600 + 37*60)*1000);
+  function tick(){
+    const diff = Math.max(0, target - Date.now());
+    const days = Math.floor(diff/86400000);
+    const hrs = Math.floor((diff%86400000)/3600000);
+    const mins = Math.floor((diff%3600000)/60000);
+    const secs = Math.floor((diff%60000)/1000);
+    const nums = document.querySelectorAll('.countdown .num');
+    if(nums.length>=3){nums[0].textContent=String(days).padStart(2,'0'); nums[1].textContent=String(hrs).padStart(2,'0'); nums[2].textContent=String(mins).padStart(2,'0');}
+    // Add seconds if element exists
+    if(nums[3]) nums[3].textContent=String(secs).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 <script>
 (function(){
   var SELECTORS = '.product-card, .why-item, .collection-tile, .section-head, .about-stat, .contact-card, .faq-item, .drop-banner, .cd-item';
@@ -864,21 +895,9 @@ function submitNotify(){
   // Store locally
   var list = JSON.parse(localStorage.getItem('eleven_notify') || '[]');
   if(!list.includes(val)) { list.push(val); localStorage.setItem('eleven_notify', JSON.stringify(list)); }
-  // Notify via WhatsApp
-  var waMsg = encodeURIComponent('Hi ELEVEN! Please add me to the N°11 Archive Pack drop alert. My email: ' + val);
-  window.open('https://wa.me/917560943996?text=' + waMsg, '_blank');
-  // Automatically email the admin — no action needed from the customer
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      access_key: '93fa3bea-ce22-49cf-bcb0-378522dd162d',
-      subject: 'N°11 Archive Pack — drop alert signup',
-      from_name: 'ELEVEN website',
-      email: val,
-      message: 'New drop alert signup for the N°11 Archive Pack.\n\nCustomer email: ' + val
-    })
-  }).catch(function(err){ console.error('Notify email failed:', err); });
+  // Open WhatsApp with pre-filled message
+  var msg = encodeURIComponent('Hi ELEVEN! Please add me to the N°11 Archive Pack drop alert. My email: ' + val);
+  window.open('https://wa.me/917560943996?text=' + msg, '_blank');
   document.getElementById('notifyForm').style.display = 'none';
   document.getElementById('notifySuccess').style.display = 'block';
 }

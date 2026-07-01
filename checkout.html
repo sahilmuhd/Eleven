@@ -254,7 +254,7 @@ function orderOnWhatsApp() {
   const code = ELEVEN.getCouponCode();
 
   const itemLines = cart
-    .map(i => `  • ${i.name} (${i.size}) ×${i.qty}`)
+    .map(i => `  • ${i.name} (${i.size}) ×${i.qty} — ${ELEVEN.fmt(i.price * i.qty)}`)
     .join('\n');
 
   const msgLines = [
@@ -264,9 +264,17 @@ function orderOnWhatsApp() {
     '',
     '*Items:*',
     itemLines,
-    '─────────────────────',
-    'Please confirm my order and share the total. Thank you!'
+    '',
+    `Subtotal: ${ELEVEN.fmt(subtotal)}`
   ];
+  if (discountPct > 0) {
+    msgLines.push(`Discount${code ? ' (' + code + ')' : ''}: −${ELEVEN.fmt(discount)}`);
+  }
+  msgLines.push(
+    `*Total: ${ELEVEN.fmt(total)}*`,
+    '─────────────────────',
+    'Please confirm my order. Thank you!'
+  );
   const msg = msgLines.join('\n');
 
   // Save full snapshot for confirmation page
