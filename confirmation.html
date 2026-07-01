@@ -154,26 +154,21 @@
     justify-content:center;
     align-items:center;
     gap:0;
-    padding:80px 40px 40px;
+    padding:96px 32px 40px;
+    overflow-y:auto;
   }
   .mobile-menu.open{display:flex;}
   .mobile-menu a{
     display:block; width:100%;
     color:var(--chalk); text-decoration:none;
-    font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,10vw,56px);
-    letter-spacing:0.04em; text-align:center;
-    padding:14px 0;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(20px,6vw,28px);
+    letter-spacing:0.03em; text-align:center;
+    padding:12px 0;
     border-bottom:1px solid var(--line);
     transition:color .2s;
   }
   .mobile-menu a:first-child{border-top:1px solid var(--line);}
   .mobile-menu a:hover, .mobile-menu a.active{color:var(--gold);}
-  .mobile-menu-footer{
-    margin-top:32px; display:flex; gap:24px; align-items:center;
-    font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--steel-dim);
-  }
-  .mobile-menu-footer a{color:var(--steel-dim); text-decoration:none;}
-  .mobile-menu-footer a:hover{color:var(--chalk);}
 
   @media(max-width:900px){
     .hamburger{display:flex;}
@@ -250,13 +245,6 @@
     <a href="contact.html" class="">Contact</a>
   <a href="search.html">Search</a>
     <a href="wishlist.html">Wishlist</a>
-  <div class="mobile-menu-footer">
-    <a href="https://wa.me/917560943996" target="_blank" rel="noopener">WhatsApp</a>
-    <span>·</span>
-    <a href="mailto:sahilmuhd123@gmail.com">Email</a>
-    <span>·</span>
-    <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
-  </div>
 </div>
 
 <div class="stepper">
