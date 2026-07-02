@@ -65,7 +65,15 @@
   .item-price{font-family:'JetBrains Mono',monospace; font-size:14px; white-space:nowrap;}
 
   .empty-state{text-align:center; padding:48px 24px; color:var(--steel-dim);}
+  .empty-state svg{width:44px; margin-bottom:16px; opacity:0.6;}
+  .empty-state h3{color:var(--chalk); font-size:16px; font-weight:600; margin-bottom:6px;}
   .empty-state p{margin-bottom:20px; font-size:14px;}
+  .btn-checkout{
+    display:inline-block; background:var(--chalk); color:var(--ink); border:none;
+    padding:14px 32px; font-size:13px; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;
+    cursor:pointer; transition:background .25s; text-align:center; text-decoration:none;
+  }
+  .btn-checkout:hover{background:var(--blue); color:var(--chalk);}
 
   /* TOTALS + ACTION (right) */
   .action-card{background:var(--charcoal); border:1px solid var(--line); padding:28px; position:sticky; top:90px;}
@@ -148,8 +156,10 @@
     <h2 class="display">Order summary</h2>
     <div id="orderItems">
       <div class="empty-state">
-        <p>Your cart is empty.</p>
-        <a href="shop.html" style="color:var(--blue); font-size:13px; text-decoration:none; letter-spacing:0.05em; text-transform:uppercase; font-weight:600;">Go shopping →</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="shop.html" class="btn-checkout">Start shopping</a>
       </div>
     </div>
   </div>
@@ -205,7 +215,7 @@ function render() {
   const waBtn = document.getElementById('waBtn');
 
   if (cart.length === 0) {
-    itemsEl.innerHTML = '<div class="empty-state"><p>Your cart is empty.</p><a href="shop.html" style="color:var(--blue);font-size:13px;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;">Go shopping →</a></div>';
+    itemsEl.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><h3>Your cart is empty</h3><p>Looks like you haven\'t added anything yet.</p><a href="shop.html" class="btn-checkout" style="width:auto;">Start shopping</a></div>';
     if (subtotalEl) subtotalEl.textContent = '—';
     if (totalEl) totalEl.textContent = '—';
     if (discountRowEl) discountRowEl.style.display = 'none';

@@ -94,12 +94,14 @@
   /* ===== RESULTS ===== */
   .results-wrap{padding:36px 48px 100px;}
   .results-meta{font-size:13px; color:var(--steel-dim); margin-bottom:24px;}
-  .results-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .results-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:24px 20px;}
   .product-card{ transform-style:preserve-3d; will-change:transform; background:var(--charcoal); border:1px solid var(--line); transition:border-color .3s; cursor:pointer;}
   .product-card:hover{border-color:var(--steel-dim);}
-  .card-art{height:220px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
+  .card-art{height:280px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
   .card-art svg{width:68%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
   .product-card:hover .card-art svg{transform:translateY(-5px) scale(1.04);}
+  .card-art img{width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art img{transform:scale(1.06);}
   .badge{position:absolute; top:12px; left:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:5px 9px; background:var(--gold); color:var(--ink); font-weight:500;}
   .badge.sale{background:var(--blue); color:var(--chalk);}
   .card-wishlist{
@@ -143,7 +145,8 @@
     .search-head{padding:36px 20px 24px;}
     .search-box input{font-size:18px;}
     .results-wrap{padding:24px 20px 60px;}
-    .results-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+    .results-grid{grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px;}
+    .card-art{height:200px;}
   }
   nav.nav-scrolled{
     background:rgba(11,11,12,0.92);
@@ -262,18 +265,6 @@ const shoeShapes = [
 ];
 
 const allProducts = [
-  { name:'Stride Runner',  sku:'RN-001', price:6499,  shape:0, cats:['Running'],  sizes:[7,8,9,10],  isNew:true,  onSale:false },
-  { name:'Off-Court Low',  sku:'CS-014', price:4999,  shape:1, cats:['Casual'],   sizes:[6,7,9],      isNew:false, onSale:true  },
-  { name:'Velocity Mid',   sku:'RN-007', price:5299,  shape:2, cats:['Running'],  sizes:[8,9,10,11], isNew:false, onSale:true  },
-  { name:'Drift Slide',    sku:'SL-002', price:2199,  shape:3, cats:['Slides'],   sizes:[7,8,9],      isNew:false, onSale:false },
-  { name:'Apex Trainer',   sku:'RN-012', price:7299,  shape:0, cats:['Running'],  sizes:[8,9,10],     isNew:true,  onSale:false },
-  { name:'Sector One',     sku:'CS-009', price:4599,  shape:1, cats:['Casual'],   sizes:[6,7,8],      isNew:false, onSale:false },
-  { name:'Glide Pro',      sku:'RN-018', price:6899,  shape:2, cats:['Running'],  sizes:[7,8,9,10],   isNew:false, onSale:false },
-  { name:'Form Low',       sku:'CS-021', price:5099,  shape:1, cats:['Casual'],   sizes:[8,9,10],     isNew:false, onSale:true  },
-  { name:'Edge Runner',    sku:'RN-005', price:6299,  shape:0, cats:['Running'],  sizes:[6,7,8,9],    isNew:true,  onSale:false },
-  { name:'Loop Mid',       sku:'CS-017', price:4799,  shape:1, cats:['Casual'],   sizes:[9,10,11],    isNew:false, onSale:false },
-  { name:'Vault Slide',    sku:'SL-008', price:2499,  shape:3, cats:['Slides'],   sizes:[6,7,8],      isNew:false, onSale:false },
-  { name:'Stratus Trainer',sku:'RN-023', price:7499,  shape:2, cats:['Running','Limited edition'], sizes:[8,9,10,11], isNew:true, onSale:false },
 ].concat((typeof getElevenCatalog === 'function' ? getElevenCatalog() : (typeof ELEVEN_REAL_PRODUCTS !== 'undefined' ? ELEVEN_REAL_PRODUCTS : [])).map(function(p){
   return { name:p.name, sku:p.sku, price:p.price, shape:0, cats:p.cats, sizes:p.sizes, isNew:p.isNew, onSale:p.onSale, real:true, image:p.images[0], brand:p.brand };
 }));

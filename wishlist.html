@@ -80,12 +80,14 @@
 
   .wish-wrap{padding:36px 48px 100px;}
 
-  .wish-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .wish-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:24px 20px;}
   .product-card{ transform-style:preserve-3d; will-change:transform; background:var(--charcoal); border:1px solid var(--line); transition:border-color .3s; cursor:pointer;}
   .product-card:hover{border-color:var(--steel-dim);}
-  .card-art{height:220px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
+  .card-art{height:280px; background:linear-gradient(135deg, var(--charcoal-2), #161617); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
   .card-art svg{width:68%; transition:transform .5s cubic-bezier(.22,1,.36,1);}
   .product-card:hover .card-art svg{transform:translateY(-5px) scale(1.04);}
+  .card-art img{width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.22,1,.36,1);}
+  .product-card:hover .card-art img{transform:scale(1.06);}
   .badge{position:absolute; top:12px; left:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:5px 9px; background:var(--gold); color:var(--ink); font-weight:500;}
   .badge.sale{background:var(--blue); color:var(--chalk);}
   .card-remove{
@@ -128,7 +130,8 @@
     nav{padding:16px 20px;}
     .page-head{padding:36px 20px 0;}
     .wish-wrap{padding:24px 20px 60px;}
-    .wish-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+    .wish-grid{grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px;}
+    .card-art{height:200px;}
   }
   nav.nav-scrolled{
     background:rgba(11,11,12,0.92);

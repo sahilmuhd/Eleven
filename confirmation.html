@@ -75,6 +75,7 @@
   .timeline::before{
     content:''; position:absolute; top:13px; left:5%; right:5%; height:1px; background:var(--line); z-index:0;
   }
+  .timeline.single::before{display:none;}
   .timeline-step{position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; flex:1;}
   .timeline-dot{
     width:26px; height:26px; border-radius:50%; background:var(--ink); border:1.5px solid var(--steel-dim);
@@ -272,31 +273,11 @@
 
 <div class="timeline-section">
   <h3 class="display">Order status</h3>
-  <div class="timeline">
-    <div class="timeline-step done">
+  <div class="timeline single" style="justify-content:center;">
+    <div class="timeline-step done" style="flex:none;">
       <div class="timeline-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
       <span class="lbl">Order placed</span>
       <span class="date">29 Jun</span>
-    </div>
-    <div class="timeline-step">
-      <div class="timeline-dot"></div>
-      <span class="lbl">Processing</span>
-      <span class="date">Est. 30 Jun</span>
-    </div>
-    <div class="timeline-step">
-      <div class="timeline-dot"></div>
-      <span class="lbl">Shipped</span>
-      <span class="date">Est. 1 Jul</span>
-    </div>
-    <div class="timeline-step">
-      <div class="timeline-dot"></div>
-      <span class="lbl">Out for delivery</span>
-      <span class="date">Est. 4 Jul</span>
-    </div>
-    <div class="timeline-step">
-      <div class="timeline-dot"></div>
-      <span class="lbl">Delivered</span>
-      <span class="date">Est. 5 Jul</span>
     </div>
   </div>
 </div>
@@ -312,15 +293,6 @@
   </div>
 
   <div>
-    <div class="side-card">
-      <h5>Shipping address</h5>
-      <p class="addr-name">Your name</p>
-      <p>142, 4th Cross, Kammanahalli,<br>Bangalore, Karnataka 560084</p>
-    </div>
-    <div class="side-card">
-      <h5>Payment method</h5>
-      <p>UPI — paid in full</p>
-    </div>
     <div class="actions-col">
       <a href="contact.html" class="btn primary">Track order</a>
       <a href="shop.html" class="btn outline">Continue shopping</a>
@@ -340,7 +312,7 @@
   </div>
 </div>
 
-<footer>© 2026 ELEVEN Footgear Hub. All rights reserved. · Kammanahalli, Bangalore</footer>
+<footer>© 2026 ELEVEN Footgear Hub. All rights reserved. · Kammanahalli, Bangalore · Created by <a href="https://sahilmuhd.com/" target="_blank" rel="noopener" style="color:inherit;">sahilmuhd.com</a></footer>
 
 <script>
   // Populate confirmation from saved order data
